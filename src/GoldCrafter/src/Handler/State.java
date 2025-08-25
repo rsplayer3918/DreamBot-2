@@ -8,9 +8,10 @@ import javax.swing.SwingUtilities;
 
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int state = 0, smeltLocation, product;
+        private JFrame frame;
+        private Window window;
+        private Craft.Main.State state = Craft.Main.State.SETUP;
+        private int smeltLocation, product;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -34,8 +35,8 @@ public class State {
 		} catch (Exception woeIsMe) {
 			woeIsMe.printStackTrace();
 		}
-		setState(1);
-	}
+                setState(Craft.Main.State.INIT);
+        }
 
 	public int getSmeltLocation() {
 		return smeltLocation;
@@ -45,13 +46,13 @@ public class State {
 		this.smeltLocation = smeltLocation;
 	}
 
-	public int getState() {
-		return state;
-	}
+        public Craft.Main.State getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(Craft.Main.State s) {
+                state = s;
+        }
 
 
 	public int getProduct() {

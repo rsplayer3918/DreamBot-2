@@ -1,6 +1,5 @@
 package Craft;
 
-import Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -16,23 +15,32 @@ import org.dreambot.api.wrappers.widgets.WidgetChild;
 
 public class Main extends AbstractScript {
 
-	private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
-	private Product jewelery;
+        public enum State {
+                SETUP,
+                INIT,
+                SMELT,
+                MOVE_TO_SMELT,
+                MOVE_TO_BANK,
+                BANK
+        }
 
-	private State s;
-	private Area bankArea, smeltArea;
-	private Tile smeltTile, bankTile;
-	private WidgetChild wig;
+        private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
+        private Product jewelery;
+
+        private Handler.State s;
+        private Area bankArea, smeltArea;
+        private Tile smeltTile, bankTile;
+        private WidgetChild wig;
 
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			log("Starting");
-			sleep(200);
-		}
-		init();
+                s = new Handler.State();
+                while (s.getState() == State.SETUP) {
+                        log("Starting");
+                        sleep(200);
+                }
+                init();
 	}
 
 	private void init() { //1st state
@@ -48,35 +56,39 @@ public class Main extends AbstractScript {
 	}
 
 	private Area getSmeltArea() {
-		switch (s.getSmeltLocation()) {
-			case 0:
-				return new Area(3274, 3184, 3279, 3188, 0);
-			case 1:
-				return new Tile(2973, 3370, 0).getArea(2);
-		}
-		return null;
+                switch (s.getSmeltLocation()) {
+                        case 0:
+                                return new Area(3274, 3184, 3279, 3188, 0);
+                        case 1:
+                                return new Tile(2973, 3370, 0).getArea(2);
+                        default:
+                                return null;
+                }
 	}
 
 	private Product getJewelery() {
-		switch (s.getProduct()) {
-			case 0:
-				return Product.AMULET;
-			case 1:
-				return Product.NECKLACE;
-			case 2:
-				return Product.RING;
-		}
-		return null;
+                switch (s.getProduct()) {
+                        case 0:
+                                return Product.AMULET;
+                        case 1:
+                                return Product.NECKLACE;
+                        case 2:
+                                return Product.RING;
+                        default:
+                                return null;
+                }
 	}
 
 	private Area getBankArea() {
-		switch (s.getSmeltLocation()) {
-			case 0:   //Al Kharid bank
-				return new Area(3269, 3166, 3271, 3169, 0);
-			case 1:  //:
-				break;
-		}
-		return BankLocation.getNearest(getLocalPlayer()).getArea(3);
+                switch (s.getSmeltLocation()) {
+                        case 0:   //Al Kharid bank
+                                return new Area(3269, 3166, 3271, 3169, 0);
+                        case 1:  //:
+                                break;
+                        default:
+                                break;
+                }
+                return BankLocation.getNearest(getLocalPlayer()).getArea(3);
 	}
 
 	private Tile getBankTile() {
@@ -181,18 +193,18 @@ public class Main extends AbstractScript {
 
 	private void checkState() {
 		if (getInventory().contains(GOLD_BAR_ID)) {
-			if (smeltArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
-				s.setState(3);
-			} else {
-				s.setState(2);
-			}
-		} else {
-			if (bankArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
-				s.setState(4);
-			} else {
-				s.setState(5);
-			}
-		}
+                        if (smeltArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
+                                s.setState(State.MOVE_TO_SMELT);
+                        } else {
+                                s.setState(State.SMELT);
+                        }
+                } else {
+                        if (bankArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
+                                s.setState(State.MOVE_TO_BANK);
+                        } else {
+                                s.setState(State.BANK);
+                        }
+                }
 		/*
 		3 - move to smelt
 		2 - smelt
@@ -204,22 +216,24 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2:
-				smelt();
-				break;
-			case 3:
-				moveToSmelt();
-				break;
-			case 4:
-				moveToBank();
-				break;
-			case 5:
-				bank();
-				break;
-		}
-		return Calculations.random(50, 100);
-	}
+                switch (s.getState()) {
+                        case SMELT:
+                                smelt();
+                                break;
+                        case MOVE_TO_SMELT:
+                                moveToSmelt();
+                                break;
+                        case MOVE_TO_BANK:
+                                moveToBank();
+                                break;
+                        case BANK:
+                                bank();
+                                break;
+                        default:
+                                break;
+                }
+                return Calculations.random(50, 100);
+        }
 
 	private void logout() {
 		log("Exiting");
