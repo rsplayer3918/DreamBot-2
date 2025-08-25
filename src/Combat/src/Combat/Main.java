@@ -2,6 +2,7 @@ package Combat;
 
 import Handler.State;
 import java.util.Random;
+import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.map.Area;
@@ -22,17 +23,19 @@ public class Main extends AbstractScript {
 	private GroundItem lootItem;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		for (String s : s.getLoot()) {
-			log("Looting:" + s);
-		}
-		init();
-	}
+        public void onStart() { //0th state
+                log("onStart: Combat script starting");
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        antiBan();
+                        sleep(100);
+                }
+                for (String s : s.getLoot()) {
+                        log("Looting:" + s);
+                }
+                init();
+        }
 
 	private void init() { //1st state
 		kArea = Area.generateArea(s.getFightRadius(), getLocalPlayer().getTile());
@@ -154,19 +157,23 @@ public class Main extends AbstractScript {
 		getWalking().walk(kArea.getCenter().getArea(3).getRandomTile());
 	}
 
-	private void antiBan() {
-		Random srand = new Random();
-		double chances = srand.nextDouble();
-		if (chances < 0.096) {
-			log("Antiban; changing camera angle...");
-			getCamera().rotateToEvent(srand.nextInt() + 360, srand.nextInt() + 90);
-		}
-	}
+        private void antiBan() {
+                Random srand = new Random();
+                double chances = srand.nextDouble();
+                if (chances < 0.096) {
+                        log("Antiban: changing camera angle...");
+                        getCamera().rotateToEvent(srand.nextInt(360), srand.nextInt(90));
+                } else if (chances < 0.192) {
+                        log("Antiban: random pause");
+                        sleep(Calculations.random(300, 1200));
+                }
+        }
 
 	@Override
-	public int onLoop() {
-		checkState();
-		/* Key
+        public int onLoop() {
+                log("onLoop: state " + s.getState());
+                checkState();
+                /* Key
 		0/1 - GUI StartUp
 		2 CombatChecks
 		3 - Move to Bank
@@ -189,11 +196,18 @@ public class Main extends AbstractScript {
 				walkBack();
 				break;
 			case 7:
-				antiBan();
-				break;
-		}
+                                antiBan();
+                                break;
+                }
+                antiBan();
 
-		//DEFAULT:
-		return ((int) (Math.random() * 200));
-	}
+                //DEFAULT:
+                return ((int) (Math.random() * 200));
+        }
+
+        @Override
+        public void onExit() {
+                log("onExit: Combat script stopping");
+                super.onExit();
+        }
 }

@@ -1,6 +1,7 @@
 package Miner;
 
 import Miner.Handler.State;
+import java.util.Random;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -17,14 +18,16 @@ public class Main extends AbstractScript {
 	private Area mArea, bankArea;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		init();
-	}
+        public void onStart() { //0th state
+                log("onStart: archive miner starting");
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        antiBan();
+                        sleep(100);
+                }
+                init();
+        }
 
 	private void init() { //1st state
 		mArea = Area.generateArea(s.getRadius(), getLocalPlayer().getTile());
@@ -108,26 +111,46 @@ public class Main extends AbstractScript {
 				.onlyContains((Item item) -> !(item.getName().endsWith("ore") || item.getName().equals("Coal"))), 2500);
 	}
 
-	public int onLoop() {
-		checkState();
-		switch (s.getState()) {
-			case 2: //Mine
-				mine();
-				break;
-			case 3: //Go to Bank
-				moveToBank();
-				break;
-			case 4: //Bank
-				bank();
-				break;
-			case 5: //Returning
-				walkBack();
-				break;
-			case 6:
-				drop();
-				break;
-		}
-		return Calculations.random(400, 1000);
-	}
+        public int onLoop() {
+                log("onLoop: state " + s.getState());
+                checkState();
+                switch (s.getState()) {
+                        case 2: //Mine
+                                mine();
+                                break;
+                        case 3: //Go to Bank
+                                moveToBank();
+                                break;
+                        case 4: //Bank
+                                bank();
+                                break;
+                        case 5: //Returning
+                                walkBack();
+                                break;
+                        case 6:
+                                drop();
+                                break;
+                }
+                antiBan();
+                return Calculations.random(400, 1000);
+        }
+
+        @Override
+        public void onExit() {
+                log("onExit: archive miner stopping");
+                super.onExit();
+        }
+
+        private void antiBan() {
+                Random srand = new Random();
+                double chance = srand.nextDouble();
+                if (chance < 0.096) {
+                        log("Antiban: changing camera angle...");
+                        getCamera().rotateToEvent(srand.nextInt(360), srand.nextInt(90));
+                } else if (chance < 0.192) {
+                        log("Antiban: random pause");
+                        sleep(Calculations.random(300, 1200));
+                }
+        }
 
 }
