@@ -1,6 +1,6 @@
 package Miner.GUI;
 
-import Miner.Handler.State;
+import miner.state.MinerState;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -23,14 +23,14 @@ public class Window extends JFrame {
 	private JButton startButton;
 	private JLabel fightRadiusLabel;
 	private JCheckBox dropAll;
-	private State s;
+        private MinerState s;
 
 	public Window() {
 
 	}
 
-	public Window(State s) {
-		this.s = s;
+        public Window(MinerState s) {
+                this.s = s;
 		startButton.addActionListener(actionEvent -> {
 			s.setRadius(radiusField.getText());
 			s.setDrop(dropAll.isSelected());

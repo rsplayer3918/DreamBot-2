@@ -1,6 +1,6 @@
 package GUI;
 
-import Handler.State;
+import template.state.TemplateState;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -16,13 +16,13 @@ public class Window extends JFrame {
 	private JButton startButton;
 	private JComboBox walkLocation;
 	private JTabbedPane Bank;
-	private State s;
+        private TemplateState s;
 
 	public Window() {
 	}
 
-	public Window(State s) {
-		this.s = s;
+        public Window(TemplateState s) {
+                this.s = s;
 		startButton.addActionListener(actionEvent -> {
 			s.setState(1);
 			s.killFrame();

@@ -1,6 +1,6 @@
 package Craft;
 
-import Handler.State;
+import goldcrafter.state.GoldCrafterState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -19,7 +19,7 @@ public class Main extends AbstractScript {
 	private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
 	private Product jewelery;
 
-	private State s;
+        private GoldCrafterState s;
 	private Area bankArea, smeltArea;
 	private Tile smeltTile, bankTile;
 	private WidgetChild wig;
@@ -27,7 +27,7 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new GoldCrafterState();
 		while (s.getState() < 1) {
 			log("Starting");
 			sleep(200);

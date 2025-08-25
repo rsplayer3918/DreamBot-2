@@ -1,6 +1,6 @@
 package GUI;
 
-import Handler.State;
+import goldcrafter.state.GoldCrafterState;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,13 +18,13 @@ public class Window extends JFrame {
 	private JTabbedPane Bank;
 	private JComboBox product;
 	private JComboBox comboBox1;
-	private State s;
+        private GoldCrafterState s;
 
 	public Window() {
 	}
 
-	public Window(State s) {
-		this.s = s;
+        public Window(GoldCrafterState s) {
+                this.s = s;
 		startButton.addActionListener(actionEvent -> {
 			s.setSmeltLocation(location.getSelectedIndex());
 			s.setProduct(product.getSelectedIndex());

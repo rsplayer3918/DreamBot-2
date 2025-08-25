@@ -1,6 +1,6 @@
 package Miner;
 
-import Miner.Handler.State;
+import miner.state.MinerState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -13,13 +13,13 @@ import org.dreambot.api.wrappers.items.Item;
 @ScriptManifest(category = Category.MINING, name = "Miner.01", author = "Andrew", version = .01)
 public class Main extends AbstractScript {
 
-	private State s;
+        private MinerState s;
 	private Area mArea, bankArea;
 
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new MinerState();
 		while (s.getState() < 1) {
 			sleep(100);
 		}

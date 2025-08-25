@@ -1,6 +1,6 @@
 package WC;
 
-import Handler.State;
+import wc.state.WCState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
@@ -14,7 +14,7 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 
 public class Main extends AbstractScript {
 
-	private State s;
+        private WCState s;
 	private Area bArea, cArea;
 	private GameObject curTree;
 	private Filter<GameObject> treeFilter;
@@ -58,7 +58,7 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new WCState();
 		while (s.getState() < 1) {
 			sleep(100);
 		}
