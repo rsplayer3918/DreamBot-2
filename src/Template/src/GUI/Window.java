@@ -1,5 +1,6 @@
 package GUI;
 
+import Handler.BotState;
 import Handler.State;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -24,9 +25,9 @@ public class Window extends JFrame {
 	public Window(State s) {
 		this.s = s;
 		startButton.addActionListener(actionEvent -> {
-			s.setState(1);
-			s.killFrame();
-		});
+                          s.setState(BotState.IDLE);
+                          s.killFrame();
+                  });
 	}
 
 	public JPanel getRootPanel() {

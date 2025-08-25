@@ -1,5 +1,6 @@
 package GUI;
 
+import Handler.BotState;
 import Handler.State;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -26,11 +27,11 @@ public class Window extends JFrame {
 	public Window(State s) {
 		this.s = s;
 		startButton.addActionListener(actionEvent -> {
-			s.setState(1);
-			s.setBankLocation(walkLocation.getSelectedIndex());
-			s.setTree(logType.getSelectedIndex());
-			s.setRadius(radius.getText());
-			s.killFrame();
+                          s.setState(BotState.IDLE);
+                          s.setBankLocation(walkLocation.getSelectedIndex());
+                          s.setTree(logType.getSelectedIndex());
+                          s.setRadius(radius.getText());
+                          s.killFrame();
 		});
 	}
 

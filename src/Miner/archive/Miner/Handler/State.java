@@ -6,12 +6,17 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Tracks configuration and {@link BotState} for the archived miner script.
+ */
+
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int radius, bankArea, state = 0;
-	private boolean drop;
+        private JFrame frame;
+        private Window window;
+        private int radius, bankArea;
+        private BotState state = BotState.INIT;
+        private boolean drop;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -70,13 +75,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int state) {
-		this.state = state;
-	}
+        public void setState(BotState state) {
+                this.state = state;
+        }
 
 	public JFrame getFrame() {
 		return frame;

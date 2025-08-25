@@ -5,12 +5,17 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Stores configuration and {@link BotState} for the woodcutting script.
+ */
+
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int bankLocation, state = 0, radius;
-	private String tree;
+        private JFrame frame;
+        private Window window;
+        private int bankLocation, radius;
+        private BotState state = BotState.INIT;
+        private String tree;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -78,13 +83,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(BotState s) {
+                state = s;
+        }
 
 
 }

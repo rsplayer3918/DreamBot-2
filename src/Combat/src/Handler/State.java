@@ -9,14 +9,20 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Represents the script's current state. States are now modelled using the
+ * {@link BotState} enum rather than integer values for improved readability.
+ */
+
 public class State {
 
 	private JFrame frame;
 	private Window window;
-	private boolean buryBones, takeOtherPlayersLoot;
-	private String target, food;
-	private int eatPercentage, bankLocation, foodAmt, fightRadius, state = 0;
-	private List<String> loot;
+        private boolean buryBones, takeOtherPlayersLoot;
+        private String target, food;
+        private int eatPercentage, bankLocation, foodAmt, fightRadius;
+        private BotState state = BotState.INIT;
+        private List<String> loot;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -71,13 +77,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(BotState s) {
+                state = s;
+        }
 
 	public String getTarget() {
 		return target;

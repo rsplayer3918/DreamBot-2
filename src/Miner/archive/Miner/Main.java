@@ -1,5 +1,6 @@
 package Miner;
 
+import Miner.Handler.BotState;
 import Miner.Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
@@ -19,10 +20,10 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
+                s = new State();
+                while (s.getState() == BotState.INIT) {
+                        sleep(100);
+                }
 		init();
 	}
 
@@ -63,19 +64,19 @@ public class Main extends AbstractScript {
 
 	private void checkState() {
 		if (getInventory().isFull()) {
-			if (s.isDrop()) {
-				s.setState(6);
-			} else if (bankArea.contains(getLocalPlayer())) {
-				s.setState(4);  //Bank
-			} else {
-				s.setState(3);  //Walk to bank
-			}
-		} else if (!mArea.contains(getLocalPlayer())) {
-			s.setState(5);  //Returning
-		} else {
-			s.setState(2);  //Mining
-		}
-	}
+                        if (s.isDrop()) {
+                                s.setState(BotState.DROP);
+                        } else if (bankArea.contains(getLocalPlayer())) {
+                                s.setState(BotState.BANK);  //Bank
+                        } else {
+                                s.setState(BotState.MOVE_TO_BANK);  //Walk to bank
+                        }
+                } else if (!mArea.contains(getLocalPlayer())) {
+                        s.setState(BotState.WALK_BACK);  //Returning
+                } else {
+                        s.setState(BotState.MINE);  //Mining
+                }
+        }
 
 	private void mine() {      ///////////2nd state///////////
 		GameObject rock = getGameObjects()
@@ -110,23 +111,25 @@ public class Main extends AbstractScript {
 
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2: //Mine
-				mine();
-				break;
-			case 3: //Go to Bank
-				moveToBank();
-				break;
-			case 4: //Bank
-				bank();
-				break;
-			case 5: //Returning
-				walkBack();
-				break;
-			case 6:
-				drop();
-				break;
-		}
+                switch (s.getState()) {
+                        case MINE: //Mine
+                                mine();
+                                break;
+                        case MOVE_TO_BANK: //Go to Bank
+                                moveToBank();
+                                break;
+                        case BANK: //Bank
+                                bank();
+                                break;
+                        case WALK_BACK: //Returning
+                                walkBack();
+                                break;
+                        case DROP:
+                                drop();
+                                break;
+                        default:
+                                break;
+                }
 		return Calculations.random(400, 1000);
 	}
 

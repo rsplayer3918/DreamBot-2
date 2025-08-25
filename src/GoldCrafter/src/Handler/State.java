@@ -6,11 +6,16 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Holds configuration and current {@link BotState} for the crafting module.
+ */
+
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int state = 0, smeltLocation, product;
+        private JFrame frame;
+        private Window window;
+        private BotState state = BotState.INIT;
+        private int smeltLocation, product;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -31,11 +36,11 @@ public class State {
 			frame.setVisible(false);
 			frame.dispose();
 			window.dispose();
-		} catch (Exception woeIsMe) {
-			woeIsMe.printStackTrace();
-		}
-		setState(1);
-	}
+                } catch (Exception woeIsMe) {
+                        woeIsMe.printStackTrace();
+                }
+                setState(BotState.IDLE);
+        }
 
 	public int getSmeltLocation() {
 		return smeltLocation;
@@ -45,13 +50,13 @@ public class State {
 		this.smeltLocation = smeltLocation;
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(BotState s) {
+                state = s;
+        }
 
 
 	public int getProduct() {

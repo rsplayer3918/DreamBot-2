@@ -1,6 +1,7 @@
 package Walk;
 
 
+import Handler.BotState;
 import Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
@@ -16,10 +17,10 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
+                s = new State();
+                while (s.getState() == BotState.INIT) {
+                        sleep(100);
+                }
 		init();
 	}
 
@@ -39,12 +40,14 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2:
-				break;
-			case 3:
-				break;
-		}
+                switch (s.getState()) {
+                        case STATE_TWO:
+                                break;
+                        case STATE_THREE:
+                                break;
+                        default:
+                                break;
+                }
 
 		//RUN EVERY SECOND-ISH
 		return Calculations.random(200, 800);
