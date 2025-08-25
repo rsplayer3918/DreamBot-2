@@ -121,28 +121,32 @@ public class Main extends AbstractScript {
 	}
 
 	/////////////////////2nd STATE/////////////////////////
-	private int checkCombat() {
-		if (!target.exists()) {
-			target = getNpcs().closest(targetfilter);
-			getCamera().rotateToEntity(target);
-		}
-		if (getLocalPlayer().getHealthPercent() < s.getEatPercentage()) { //Eat if Low
-			getInventory().interact(s.getFood(), "Eat");
-			sleep(100, 300);
-		}
-		if (!getLocalPlayer().isInCombat()) {
-			target.interact("Attack");
-			sleepUntil(() -> {
-				sleep(100);
-				return getLocalPlayer().isInCombat();
-			}, 2000);
-			sleepUntil(() -> {
-				sleep(100);
-				return !getLocalPlayer().isInCombat();
-			}, 10000);
-		}
-		return (int) (Math.random() * 201);
-	}
+        private int checkCombat() {
+                if (target == null || !target.exists()) {
+                        target = getNpcs().closest(targetfilter);
+                        if (target == null) {
+                                s.setState(7); // fallback state when no target found
+                                return (int) (Math.random() * 201);
+                        }
+                        getCamera().rotateToEntity(target);
+                }
+                if (getLocalPlayer().getHealthPercent() < s.getEatPercentage()) { //Eat if Low
+                        getInventory().interact(s.getFood(), "Eat");
+                        sleep(100, 300);
+                }
+                if (!getLocalPlayer().isInCombat() && target != null) {
+                        target.interact("Attack");
+                        sleepUntil(() -> {
+                                sleep(100);
+                                return getLocalPlayer().isInCombat();
+                        }, 2000);
+                        sleepUntil(() -> {
+                                sleep(100);
+                                return !getLocalPlayer().isInCombat();
+                        }, 10000);
+                }
+                return (int) (Math.random() * 201);
+        }
 
 	/////////////////////5th State/////////////////////////
 	private void loot() {
