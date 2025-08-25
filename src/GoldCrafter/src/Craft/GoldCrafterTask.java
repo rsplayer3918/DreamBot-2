@@ -14,7 +14,7 @@ import org.dreambot.api.wrappers.widgets.WidgetChild;
 
 @ScriptManifest(category = Category.CRAFTING, name = "Crafting.01", author = "Andrew", version = .01)
 
-public class Main extends AbstractScript {
+public class GoldCrafterTask extends AbstractScript {
 
 	private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
 	private Product jewelery;

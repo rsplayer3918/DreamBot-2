@@ -12,7 +12,7 @@ import org.dreambot.api.wrappers.interactive.GameObject;
 
 @ScriptManifest(category = Category.WOODCUTTING, name = "WC.01", author = "Andrew", version = .01)
 
-public class Main extends AbstractScript {
+public class WoodcuttingTask extends AbstractScript {
 
 	private State s;
 	private Area bArea, cArea;
