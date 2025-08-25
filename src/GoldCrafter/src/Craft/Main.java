@@ -1,6 +1,7 @@
 package Craft;
 
 import Handler.State;
+import java.util.Random;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -25,15 +26,16 @@ public class Main extends AbstractScript {
 	private WidgetChild wig;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			log("Starting");
-			sleep(200);
-		}
-		init();
-	}
+        public void onStart() { //0th state
+                log("onStart: crafter starting");
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        antiBan();
+                        sleep(200);
+                }
+                init();
+        }
 
 	private void init() { //1st state
 		bankArea = getBankArea();
@@ -202,24 +204,44 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public int onLoop() {
-		checkState();
-		switch (s.getState()) {
-			case 2:
-				smelt();
-				break;
-			case 3:
-				moveToSmelt();
-				break;
-			case 4:
-				moveToBank();
-				break;
-			case 5:
-				bank();
-				break;
-		}
-		return Calculations.random(50, 100);
-	}
+        public int onLoop() {
+                log("onLoop: state " + s.getState());
+                checkState();
+                switch (s.getState()) {
+                        case 2:
+                                smelt();
+                                break;
+                        case 3:
+                                moveToSmelt();
+                                break;
+                        case 4:
+                                moveToBank();
+                                break;
+                        case 5:
+                                bank();
+                                break;
+                }
+                antiBan();
+                return Calculations.random(50, 100);
+        }
+
+        @Override
+        public void onExit() {
+                log("onExit: crafter stopping");
+                super.onExit();
+        }
+
+        private void antiBan() {
+                Random srand = new Random();
+                double chance = srand.nextDouble();
+                if (chance < 0.096) {
+                        log("Antiban: changing camera angle...");
+                        getCamera().rotateToEvent(srand.nextInt(360), srand.nextInt(90));
+                } else if (chance < 0.192) {
+                        log("Antiban: random pause");
+                        sleep(Calculations.random(300, 1200));
+                }
+        }
 
 	private void logout() {
 		log("Exiting");

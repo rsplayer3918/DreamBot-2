@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
+import java.util.Random;
 import nezz.dreambot.powerminer.gui.ScriptVars;
 import nezz.dreambot.powerminer.gui.minerGui;
 import org.dreambot.api.methods.Calculations;
@@ -51,42 +52,44 @@ public class Miner extends AbstractScript {
 	}
 
 	@Override
-	public void onStart() {
-		getClient().disableIdleCamera();
-		getClient().disableIdleMouse();
-		log("Starting DreamBot AIO Mining script!");
-	}
+        public void onStart() {
+                log("onStart: miner starting");
+                getClient().disableIdleCamera();
+                getClient().disableIdleMouse();
+                log("Starting DreamBot AIO Mining script!");
+        }
 
 	@Override
-	public int onLoop() {
-		if (started) {
-			if (currTask.reachedGoal()) {
-				log("Finished current task!");
-				taskPlace++;
-				if (taskPlace >= sv.tasks.size()) {
-					log("Finished all tasks!");
-					stop();
-					return 1;
-				}
-				currTask = sv.tasks.get(taskPlace);
-				currTask.resetTimer();
-				return 200;
-			}
+        public int onLoop() {
+                if (started) {
+                        if (currTask.reachedGoal()) {
+                                log("Finished current task!");
+                                taskPlace++;
+                                if (taskPlace >= sv.tasks.size()) {
+                                        log("Finished all tasks!");
+                                        stop();
+                                        return 1;
+                                }
+                                currTask = sv.tasks.get(taskPlace);
+                                currTask.resetTimer();
+                                return 200;
+                        }
 
-			Player myPlayer = getLocalPlayer();
-			if (!getWalking().isRunEnabled() && getWalking().getRunEnergy() > Calculations.random(30, 70)) {
-				getWalking().toggleRun();
-			}
-			if (myPlayer.isMoving() && getClient().getDestination() != null
-					&& getClient().getDestination().distance(myPlayer) > 5) {
-				return Calculations.random(300, 600);
-			}
-			if (getLocalPlayer().isInCombat()) {
-				return Calculations.random(300, 600);
-			}
-		}
-		state = getState();
-		switch (state) {
+                        Player myPlayer = getLocalPlayer();
+                        if (!getWalking().isRunEnabled() && getWalking().getRunEnergy() > Calculations.random(30, 70)) {
+                                getWalking().toggleRun();
+                        }
+                        if (myPlayer.isMoving() && getClient().getDestination() != null
+                                        && getClient().getDestination().distance(myPlayer) > 5) {
+                                return Calculations.random(300, 600);
+                        }
+                        if (getLocalPlayer().isInCombat()) {
+                                return Calculations.random(300, 600);
+                        }
+                }
+                state = getState();
+                log("onLoop: state " + state);
+                switch (state) {
 			case GUI:
 				if (gui == null) {
 					gui = new minerGui(sv, getClient().getMethodContext());
@@ -186,8 +189,9 @@ public class Miner extends AbstractScript {
 				currTask.getTracker().update();
 				break;
 		}
-		return Calculations.random(50, 100);
-	}
+                antiBan();
+                return Calculations.random(50, 100);
+        }
 
 	private int getFirstEmptySlot() {
 		for (int i = 0; i < 28; i++) {
@@ -217,9 +221,21 @@ public class Miner extends AbstractScript {
 	}
 
 	@Override
-	public void onExit() {
-		log("Stopping testing!");
-	}
+        public void onExit() {
+                log("onExit: miner stopping");
+        }
+
+        private void antiBan() {
+                Random srand = new Random();
+                double chance = srand.nextDouble();
+                if (chance < 0.096) {
+                        log("Antiban: changing camera angle...");
+                        getCamera().rotateToEvent(srand.nextInt(360), srand.nextInt(90));
+                } else if (chance < 0.192) {
+                        log("Antiban: random pause");
+                        sleep(Calculations.random(300, 1200));
+                }
+        }
 
 	public void onPaint(Graphics g) {
 		if (started) {

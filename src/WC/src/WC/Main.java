@@ -1,6 +1,7 @@
 package WC;
 
 import Handler.State;
+import java.util.Random;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
@@ -20,10 +21,11 @@ public class Main extends AbstractScript {
 	private Filter<GameObject> treeFilter;
 
 	@Override
-	public void onExit() {
-		super.onExit();
-		getMouse().moveMouseOutsideScreen();
-	}
+        public void onExit() {
+                log("onExit: woodcutter stopping");
+                super.onExit();
+                getMouse().moveMouseOutsideScreen();
+        }
 
 	private Area getBankArea() {
 		BankLocation tmp = BankLocation.getNearest(getLocalPlayer());
@@ -56,14 +58,16 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		init();
-	}
+        public void onStart() { //0th state
+                log("onStart: woodcutter starting");
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        antiBan();
+                        sleep(100);
+                }
+                init();
+        }
 
 	private void init() { //1st state
 		treeFilter = (tree -> tree.getName().equals(s.getTree()) && cArea.contains(tree));
@@ -122,25 +126,39 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public int onLoop() {
-		checkState();
-		switch (s.getState()) {
-			case 2: //Cut
-				cut();
-				break;
-			case 3:  //Move to bank
-				moveToBank();
-				break;
-			case 4:
-				bank();
-				break;
-			case 5: //Move back
-				walkBack();
-				break;
-		}
+        public int onLoop() {
+                log("onLoop: state " + s.getState());
+                checkState();
+                switch (s.getState()) {
+                        case 2: //Cut
+                                cut();
+                                break;
+                        case 3:  //Move to bank
+                                moveToBank();
+                                break;
+                        case 4:
+                                bank();
+                                break;
+                        case 5: //Move back
+                                walkBack();
+                                break;
+                }
+                antiBan();
 
-		//RUN EVERY SECOND-ISH
-		return Calculations.random(200, 500);
-	}
+                //RUN EVERY SECOND-ISH
+                return Calculations.random(200, 500);
+        }
+
+        private void antiBan() {
+                Random srand = new Random();
+                double chance = srand.nextDouble();
+                if (chance < 0.096) {
+                        log("Antiban: changing camera angle...");
+                        getCamera().rotateToEvent(srand.nextInt(360), srand.nextInt(90));
+                } else if (chance < 0.192) {
+                        log("Antiban: random pause");
+                        sleep(Calculations.random(300, 1200));
+                }
+        }
 }
 
