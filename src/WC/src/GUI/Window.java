@@ -1,41 +1,59 @@
 package GUI;
 
 import Handler.State;
+import Handler.WCConfig;
+import common.gui.ConfigWindow;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-public class Window extends JFrame {
+public class Window extends ConfigWindow<WCConfig> {
 
-	public static final int W = 400, H = 250;
-	public static final String TITLE = "Yet Another RuneScape main bot";
-	private JPanel RootPanel;
+    private JPanel RootPanel;
+    private JButton startButton;
+    private JComboBox walkLocation, logType;
+    private JTabbedPane Bank;
+    private JTextField radius;
 
-	private JButton startButton;
-	private JComboBox walkLocation, logType;
-	private JTextField radius;
-	private JTabbedPane Bank;
-	private State s;
+    public Window() {
+    }
 
-	public Window() {
-	}
+    public Window(State s) {
+        this.state = s;
+        startButton.addActionListener(actionEvent -> {
+            WCConfig cfg = s.getConfig();
+            cfg.setBankLocation(walkLocation.getSelectedIndex());
+            cfg.setTree(getTreeName(logType.getSelectedIndex()));
+            try {
+                cfg.setRadius(Integer.parseInt(radius.getText()));
+            } catch (Exception e) {
+                cfg.setRadius(0);
+            }
+            s.setState(1);
+            s.killFrame();
+        });
+    }
 
-	public Window(State s) {
-		this.s = s;
-		startButton.addActionListener(actionEvent -> {
-			s.setState(1);
-			s.setBankLocation(walkLocation.getSelectedIndex());
-			s.setTree(logType.getSelectedIndex());
-			s.setRadius(radius.getText());
-			s.killFrame();
-		});
-	}
+    private String getTreeName(int idx) {
+        switch (idx) {
+            case 0:
+                return "Tree";
+            case 1:
+                return "Oak Tree";
+            case 2:
+                return "Willow Tree";
+            case 3:
+                return "Yew Tree";
+            default:
+                return "Tree";
+        }
+    }
 
-	public JPanel getRootPanel() {
-		return RootPanel;
-	}
-
+    @Override
+    public JPanel getRootPanel() {
+        return RootPanel;
+    }
 }
+
