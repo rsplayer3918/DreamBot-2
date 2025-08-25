@@ -1,8 +1,8 @@
 package WC;
 
 import Handler.State;
+import common.BankHelper;
 import org.dreambot.api.methods.Calculations;
-import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.script.AbstractScript;
@@ -24,37 +24,6 @@ public class Main extends AbstractScript {
 		super.onExit();
 		getMouse().moveMouseOutsideScreen();
 	}
-
-	private Area getBankArea() {
-		BankLocation tmp = BankLocation.getNearest(getLocalPlayer());
-		switch (s.getBankLocation()) {
-			case 0:
-				break;
-			case 1:
-				tmp = BankLocation.DRAYNOR;
-				break;
-			case 2:
-				tmp = BankLocation.FALADOR_EAST;
-				break;
-			case 3:
-				tmp = BankLocation.FALADOR_WEST;
-				break;
-			case 4:
-				tmp = BankLocation.GRAND_EXCHANGE;
-				break;
-			case 5:
-				tmp = BankLocation.LUMBRIDGE;
-				break;
-			case 6:
-				tmp = BankLocation.VARROCK_EAST;
-				break;
-			case 7:
-				tmp = BankLocation.VARROCK_WEST;
-				break;
-		}
-		return tmp.getArea(3);
-	}
-
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
@@ -67,7 +36,7 @@ public class Main extends AbstractScript {
 
 	private void init() { //1st state
 		treeFilter = (tree -> tree.getName().equals(s.getTree()) && cArea.contains(tree));
-		bArea = getBankArea();
+		bArea = BankHelper.resolve(s.getBankLocation(), getLocalPlayer());
 		cArea = getLocalPlayer().getSurroundingArea(s.getRadius());
 	}
 
