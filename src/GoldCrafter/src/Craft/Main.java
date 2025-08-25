@@ -8,13 +8,10 @@ import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.methods.tabs.Tab;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.script.Category;
-import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.widgets.WidgetChild;
+import task.Task;
 
-@ScriptManifest(category = Category.CRAFTING, name = "Crafting.01", author = "Andrew", version = .01)
-
-public class Main extends AbstractScript {
+public class Main extends AbstractScript implements Task {
 
 	private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
 	private Product jewelery;
@@ -202,9 +199,9 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public int onLoop() {
-		checkState();
-		switch (s.getState()) {
+        public int onLoop() {
+                checkState();
+                switch (s.getState()) {
 			case 2:
 				smelt();
 				break;
@@ -218,8 +215,18 @@ public class Main extends AbstractScript {
 				bank();
 				break;
 		}
-		return Calculations.random(50, 100);
-	}
+                return Calculations.random(50, 100);
+        }
+
+        @Override
+        public boolean isComplete() {
+                return false;
+        }
+
+        @Override
+        public int execute() {
+                return onLoop();
+        }
 
 	private void logout() {
 		log("Exiting");

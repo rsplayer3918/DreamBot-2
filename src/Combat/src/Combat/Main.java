@@ -6,14 +6,11 @@ import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.script.Category;
-import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.items.GroundItem;
+import task.Task;
 
-@ScriptManifest(category = Category.COMBAT, name = "Combat.01", author = "Andrew", version = .01)
-
-public class Main extends AbstractScript {
+public class Main extends AbstractScript implements Task {
 
 	private Filter<NPC> targetfilter;
 	private Area kArea, bankArea;
@@ -27,7 +24,7 @@ public class Main extends AbstractScript {
 		s = new State();
 		while (s.getState() < 1) {
 			sleep(100);
-		}
+        }
 		for (String s : s.getLoot()) {
 			log("Looting:" + s);
 		}
@@ -164,7 +161,7 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public int onLoop() {
+        public int onLoop() {
 		checkState();
 		/* Key
 		0/1 - GUI StartUp
@@ -193,7 +190,17 @@ public class Main extends AbstractScript {
 				break;
 		}
 
-		//DEFAULT:
-		return ((int) (Math.random() * 200));
-	}
+                //DEFAULT:
+                return ((int) (Math.random() * 200));
+        }
+
+        @Override
+        public boolean isComplete() {
+                return false;
+        }
+
+        @Override
+        public int execute() {
+                return onLoop();
+        }
 }

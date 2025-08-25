@@ -13,15 +13,13 @@ import org.dreambot.api.methods.container.impl.bank.Bank;
 import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.methods.skills.Skill;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.script.Category;
-import org.dreambot.api.script.ScriptManifest;
+import task.Task;
 import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 
-@ScriptManifest(author = "Andrew", description = "Power Miner", name = "Miner 1.1", version = 1.1, category = Category.MINING)
-public class Miner extends AbstractScript {
+public class Miner extends AbstractScript implements Task {
 
 	Bank bank;
 	Inventory inv;
@@ -266,20 +264,30 @@ public class Miner extends AbstractScript {
 		}
 	}
 
-	public boolean walkOnScreen(Tile t) {
-		getMouse().move(getClient().getViewportTools().tileToScreen(t));
-		String action = getClient().getMenu().getDefaultAction();
-		if (action != null && action.equals("Walk here")) {
-			return getMouse().click();
-		} else {
-			getMouse().click(true);
-			sleepUntil(() -> getClient().getMenu().isMenuVisible(), 600);
-			return getClient().getMenu().clickAction("Walk here");
-		}
-	}
+        public boolean walkOnScreen(Tile t) {
+                getMouse().move(getClient().getViewportTools().tileToScreen(t));
+                String action = getClient().getMenu().getDefaultAction();
+                if (action != null && action.equals("Walk here")) {
+                        return getMouse().click();
+                } else {
+                        getMouse().click(true);
+                        sleepUntil(() -> getClient().getMenu().isMenuVisible(), 600);
+                        return getClient().getMenu().clickAction("Walk here");
+                }
+        }
 
-	private enum State {
-		MINE, DROP, BANK, GUI
-	}
+        @Override
+        public boolean isComplete() {
+                return false;
+        }
+
+        @Override
+        public int execute() {
+                return onLoop();
+        }
+
+        private enum State {
+                MINE, DROP, BANK, GUI
+        }
 
 }

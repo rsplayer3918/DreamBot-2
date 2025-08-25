@@ -6,13 +6,10 @@ import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.map.Area;
 import org.dreambot.api.script.AbstractScript;
-import org.dreambot.api.script.Category;
-import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.GameObject;
+import task.Task;
 
-@ScriptManifest(category = Category.WOODCUTTING, name = "WC.01", author = "Andrew", version = .01)
-
-public class Main extends AbstractScript {
+public class Main extends AbstractScript implements Task {
 
 	private State s;
 	private Area bArea, cArea;
@@ -122,11 +119,11 @@ public class Main extends AbstractScript {
 	}
 
 	@Override
-	public int onLoop() {
-		checkState();
-		switch (s.getState()) {
-			case 2: //Cut
-				cut();
+        public int onLoop() {
+                checkState();
+                switch (s.getState()) {
+                        case 2: //Cut
+                                cut();
 				break;
 			case 3:  //Move to bank
 				moveToBank();
@@ -140,7 +137,17 @@ public class Main extends AbstractScript {
 		}
 
 		//RUN EVERY SECOND-ISH
-		return Calculations.random(200, 500);
-	}
+                return Calculations.random(200, 500);
+        }
+
+        @Override
+        public boolean isComplete() {
+                return false;
+        }
+
+        @Override
+        public int execute() {
+                return onLoop();
+        }
 }
 
