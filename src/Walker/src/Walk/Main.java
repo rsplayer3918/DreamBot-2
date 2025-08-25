@@ -36,18 +36,19 @@ public class Main extends AbstractScript {
 
 	private void generateDestination() {
 		Tile tmpTile = null;
-		switch (s.getDestination()) {
-			case 0: //Al Kharid bank
-				destinationA = BankLocation.AL_KHARID.getArea(3);
-			case 1: //Al Kharid mining spot (3296, 3277, 0)
-				tmpTile = new Tile(3296, 3777, 0);
-				break;
-			case 2: //Barbarian Village (3092, 2421, 0)
-				tmpTile = new Tile(3092, 2421, 0);
-				break;
-			case 3: //Chaos Temple (2935, 3516, 0)
-				tmpTile = new Tile(2935, 3516, 0);
-				break;
+                switch (s.getDestination()) {
+                        case 0: //Al Kharid bank
+                                destinationA = BankLocation.AL_KHARID.getArea(3);
+                                break;
+                        case 1: //Al Kharid mining spot (3296, 3277, 0)
+                                tmpTile = new Tile(3296, 3277, 0);
+                                break;
+                        case 2: //Barbarian Village (3092, 3421, 0)
+                                tmpTile = new Tile(3092, 3421, 0);
+                                break;
+                        case 3: //Chaos Temple (2935, 3516, 0)
+                                tmpTile = new Tile(2935, 3516, 0);
+                                break;
 			case 4: //Draynor
 				tmpTile = new Tile(3094, 3244, 0);
 				break;
@@ -66,9 +67,9 @@ public class Main extends AbstractScript {
 			case 9: // Falador West
 				destinationA = BankLocation.FALADOR_WEST.getArea(3);
 				break;
-			case 10: //G.E.       (3164, 3218, 0)
-				tmpTile = new Tile(3164, 3487, 0);
-				break;
+                        case 10: //G.E.       (3164, 3218, 0)
+                                tmpTile = new Tile(3164, 3218, 0);
+                                break;
 			case 11: //Hill Giants (3115, 3449, 0)
 				tmpTile = new Tile(3115, 3449, 0);
 				break;
@@ -78,9 +79,9 @@ public class Main extends AbstractScript {
 			case 13: //Port Sarim (3031, 3236, 0)
 				tmpTile = new Tile(3031, 3236, 0);
 				break;
-			case 14: //Rimmington (2955, 3215, 0)
-				tmpTile = new Tile(2956, 3215, 0);
-				break;
+                        case 14: //Rimmington (2955, 3215, 0)
+                                tmpTile = new Tile(2955, 3215, 0);
+                                break;
 			case 15:  // Varrock center (3212, 3428, 0)
 				tmpTile = new Tile(3212, 3428, 0);
 				break;
