@@ -21,7 +21,7 @@ import org.dreambot.api.wrappers.interactive.Player;
 import org.dreambot.api.wrappers.items.Item;
 
 @ScriptManifest(author = "Andrew", description = "Power Miner", name = "Miner 1.1", version = 1.1, category = Category.MINING)
-public class Miner extends AbstractScript {
+public class MiningTask extends AbstractScript {
 
 	Bank bank;
 	Inventory inv;
@@ -31,19 +31,16 @@ public class Miner extends AbstractScript {
 	private State state;
 	private GameObject currRock = null;
 	//private Tile startTile = null;
-	private MineTask currTask = null;
-	private int taskPlace = 0;
-	private boolean started = false;
-	private minerGui gui = null;
+        private MineTask currTask = null;
+        private int taskPlace = 0;
+        private boolean started = false;
+        private minerGui gui = null;
 
-	private State getState() {
-		if (!started) {
-			return State.GUI;
-		}
-		if (currTask.isPowerMine()) {
-			if (getInventory().contains(currTask.getOreName())) {
-				return State.DROP;
-			}
+        private State getState() {
+                if (currTask.isPowerMine()) {
+                        if (getInventory().contains(currTask.getOreName())) {
+                                return State.DROP;
+                        }
 		} else if (getInventory().isFull()) {
 			return State.BANK;
 		}
@@ -51,67 +48,55 @@ public class Miner extends AbstractScript {
 	}
 
 	@Override
-	public void onStart() {
-		getClient().disableIdleCamera();
-		getClient().disableIdleMouse();
-		log("Starting DreamBot AIO Mining script!");
-	}
+        public void onStart() {
+                getClient().disableIdleCamera();
+                getClient().disableIdleMouse();
+                log("Starting DreamBot AIO Mining script!");
+                gui = new minerGui(sv, getClient().getMethodContext());
+                while (!sv.started) {
+                        sleep(300);
+                }
+                bank = getBank();
+                inv = getInventory();
+                currTask = sv.tasks.get(0);
+                currTask.resetTimer();
+                getSkillTracker().start(Skill.MINING);
+                timer = new Timer();
+                started = true;
+        }
 
 	@Override
-	public int onLoop() {
-		if (started) {
-			if (currTask.reachedGoal()) {
-				log("Finished current task!");
-				taskPlace++;
-				if (taskPlace >= sv.tasks.size()) {
-					log("Finished all tasks!");
-					stop();
-					return 1;
-				}
-				currTask = sv.tasks.get(taskPlace);
-				currTask.resetTimer();
-				return 200;
-			}
+        public int onLoop() {
+                if (currTask.reachedGoal()) {
+                        log("Finished current task!");
+                        taskPlace++;
+                        if (taskPlace >= sv.tasks.size()) {
+                                log("Finished all tasks!");
+                                stop();
+                                return 1;
+                        }
+                        currTask = sv.tasks.get(taskPlace);
+                        currTask.resetTimer();
+                        return 200;
+                }
 
-			Player myPlayer = getLocalPlayer();
-			if (!getWalking().isRunEnabled() && getWalking().getRunEnergy() > Calculations.random(30, 70)) {
-				getWalking().toggleRun();
-			}
-			if (myPlayer.isMoving() && getClient().getDestination() != null
-					&& getClient().getDestination().distance(myPlayer) > 5) {
-				return Calculations.random(300, 600);
-			}
-			if (getLocalPlayer().isInCombat()) {
-				return Calculations.random(300, 600);
-			}
-		}
-		state = getState();
-		switch (state) {
-			case GUI:
-				if (gui == null) {
-					gui = new minerGui(sv, getClient().getMethodContext());
-					sleep(300);
-				} else if (!gui.isVisible() && !sv.started) {
-					gui.setVisible(true);
-					sleep(1000);
-				} else {
-					if (!sv.started) {
-						sleep(300);
-					} else {
-						bank = getBank();
-						inv = getInventory();
-						currTask = sv.tasks.get(0);
-						currTask.resetTimer();
-						getSkillTracker().start(Skill.MINING);
-						timer = new Timer();
-						started = true;
-					}
-				}
-				break;
-			case BANK:
-				if (bank.isOpen()) {
-					if (inv.get(i -> {
-						if (i == null || i.getName() == null) {
+                Player myPlayer = getLocalPlayer();
+                if (!getWalking().isRunEnabled() && getWalking().getRunEnergy() > Calculations.random(30, 70)) {
+                        getWalking().toggleRun();
+                }
+                if (myPlayer.isMoving() && getClient().getDestination() != null
+                                && getClient().getDestination().distance(myPlayer) > 5) {
+                        return Calculations.random(300, 600);
+                }
+                if (getLocalPlayer().isInCombat()) {
+                        return Calculations.random(300, 600);
+                }
+                state = getState();
+                switch (state) {
+                        case BANK:
+                                if (bank.isOpen()) {
+                                        if (inv.get(i -> {
+                                                if (i == null || i.getName() == null) {
 							return false;
 						}
 						return i.getName().contains("pickaxe");
@@ -137,21 +122,21 @@ public class Miner extends AbstractScript {
 					}
 				}
 				break;
-			case DROP:
-				currRock = null;
-				Item ore = inv.get(currTask.getOreName());
-				if (ore != null) {
-					inv.interact(ore.getName(), "Drop");
-					sleepUntil(() -> {
-						Item ore1 = inv.get(currTask.getOreName());
-						return ore1 == null;
-					}, 1200);
-				}
-				break;
-			case MINE:
-				if (bank.isOpen()) {
-					bank.close();
-					sleepUntil(() -> !bank.isOpen(), 1200);
+                        case DROP:
+                                currRock = null;
+                                Item ore = inv.get(currTask.getOreName());
+                                if (ore != null) {
+                                        inv.interact(ore.getName(), "Drop");
+                                        sleepUntil(() -> {
+                                                Item ore1 = inv.get(currTask.getOreName());
+                                                return ore1 == null;
+                                        }, 1200);
+                                }
+                                break;
+                        case MINE:
+                                if (bank.isOpen()) {
+                                        bank.close();
+                                        sleepUntil(() -> !bank.isOpen(), 1200);
 				} else {
 					if (currTask.getStartTile().distance(getLocalPlayer()) > 10) {
 						getWalking().walk(currTask.getStartTile());
@@ -185,9 +170,9 @@ public class Miner extends AbstractScript {
 				}
 				currTask.getTracker().update();
 				break;
-		}
-		return Calculations.random(50, 100);
-	}
+                }
+                return Calculations.random(50, 100);
+        }
 
 	private int getFirstEmptySlot() {
 		for (int i = 0; i < 28; i++) {
@@ -278,8 +263,8 @@ public class Miner extends AbstractScript {
 		}
 	}
 
-	private enum State {
-		MINE, DROP, BANK, GUI
-	}
+        private enum State {
+                MINE, DROP, BANK
+        }
 
 }

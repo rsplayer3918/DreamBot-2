@@ -13,7 +13,7 @@ import org.dreambot.api.wrappers.items.GroundItem;
 
 @ScriptManifest(category = Category.COMBAT, name = "Combat.01", author = "Andrew", version = .01)
 
-public class Main extends AbstractScript {
+public class CombatTask extends AbstractScript {
 
 	private Filter<NPC> targetfilter;
 	private Area kArea, bankArea;
