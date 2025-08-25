@@ -7,10 +7,11 @@ import javax.swing.SwingUtilities;
 
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int bankLocation, state = 0, radius;
-	private String tree;
+        private JFrame frame;
+        private Window window;
+        private int bankLocation, radius;
+        private WC.Main.State state = WC.Main.State.SETUP;
+        private String tree;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -31,20 +32,23 @@ public class State {
 	}
 
 	public void setTree(int l) {
-		switch (l) {
-			case 0:
-				tree = "Tree";
-				break;
-			case 1:
-				tree = "Oak Tree";
-				break;
-			case 2:
-				tree = "Willow Tree";
-				break;
-			case 3:
-				tree = "Yew Tree";
-				break;
-		}
+                switch (l) {
+                        case 0:
+                                tree = "Tree";
+                                break;
+                        case 1:
+                                tree = "Oak Tree";
+                                break;
+                        case 2:
+                                tree = "Willow Tree";
+                                break;
+                        case 3:
+                                tree = "Yew Tree";
+                                break;
+                        default:
+                                tree = "Tree";
+                                break;
+                }
 	}
 
 	public int getRadius() {
@@ -78,13 +82,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public WC.Main.State getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(WC.Main.State s) {
+                state = s;
+        }
 
 
 }

@@ -42,10 +42,10 @@ public class Window extends JFrame {
 			s.setTakeOtherPlayersLoot(takeAllCheckBox.isSelected());
 			s.setBankLocation(bankLocation.getSelectedIndex());
 			s.setEatPercentage(eatSlider.getValue());
-			s.setState(1);
-			s.killFrame();
-		});
-	}
+                        s.setState(Combat.Main.State.INIT);
+                        s.killFrame();
+                });
+        }
 
 	public JPanel getRootPanel() {
 		return RootPanel;

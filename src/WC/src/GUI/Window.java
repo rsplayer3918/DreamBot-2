@@ -26,7 +26,7 @@ public class Window extends JFrame {
 	public Window(State s) {
 		this.s = s;
 		startButton.addActionListener(actionEvent -> {
-			s.setState(1);
+                        s.setState(WC.Main.State.INIT);
 			s.setBankLocation(walkLocation.getSelectedIndex());
 			s.setTree(logType.getSelectedIndex());
 			s.setRadius(radius.getText());

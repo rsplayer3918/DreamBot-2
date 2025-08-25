@@ -1,6 +1,5 @@
 package Combat;
 
-import Handler.State;
 import java.util.Random;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
@@ -14,23 +13,33 @@ import org.dreambot.api.wrappers.items.GroundItem;
 @ScriptManifest(category = Category.COMBAT, name = "Combat.01", author = "Andrew", version = .01)
 
 public class Main extends AbstractScript {
+        public enum State {
+                SETUP,
+                INIT,
+                ATTACK,
+                MOVE_TO_BANK,
+                BANK,
+                LOOT,
+                RETURN,
+                ANTIBAN
+        }
 
-	private Filter<NPC> targetfilter;
-	private Area kArea, bankArea;
-	private State s;
-	private NPC target;
-	private GroundItem lootItem;
+        private Filter<NPC> targetfilter;
+        private Area kArea, bankArea;
+        private Handler.State s;
+        private NPC target;
+        private GroundItem lootItem;
 
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		for (String s : s.getLoot()) {
-			log("Looting:" + s);
-		}
+                s = new Handler.State();
+                while (s.getState() == State.SETUP) {
+                        sleep(100);
+                }
+                for (String loot : s.getLoot()) {
+                        log("Looting:" + loot);
+                }
 		init();
 	}
 
@@ -46,31 +55,33 @@ public class Main extends AbstractScript {
 
 	private Area getBankArea() {
 		BankLocation tmp = BankLocation.getNearest(getLocalPlayer());
-		switch (s.getBankLocation()) {
-			case 0:
-				break;
-			case 1:
-				tmp = BankLocation.DRAYNOR;
-				break;
-			case 2:
-				tmp = BankLocation.FALADOR_EAST;
-				break;
-			case 3:
-				tmp = BankLocation.FALADOR_WEST;
-				break;
-			case 4:
-				tmp = BankLocation.GRAND_EXCHANGE;
-				break;
-			case 5:
-				tmp = BankLocation.LUMBRIDGE;
-				break;
-			case 6:
-				tmp = BankLocation.VARROCK_EAST;
-				break;
-			case 7:
-				tmp = BankLocation.VARROCK_WEST;
-				break;
-		}
+                switch (s.getBankLocation()) {
+                        case 0:
+                                break;
+                        case 1:
+                                tmp = BankLocation.DRAYNOR;
+                                break;
+                        case 2:
+                                tmp = BankLocation.FALADOR_EAST;
+                                break;
+                        case 3:
+                                tmp = BankLocation.FALADOR_WEST;
+                                break;
+                        case 4:
+                                tmp = BankLocation.GRAND_EXCHANGE;
+                                break;
+                        case 5:
+                                tmp = BankLocation.LUMBRIDGE;
+                                break;
+                        case 6:
+                                tmp = BankLocation.VARROCK_EAST;
+                                break;
+                        case 7:
+                                tmp = BankLocation.VARROCK_WEST;
+                                break;
+                        default:
+                                break;
+                }
 		return tmp.getArea(3);
 	}
 
@@ -79,26 +90,26 @@ public class Main extends AbstractScript {
 			if (s.isBuryBones() && getInventory().contains("Bones")) {
 				getInventory().all(item -> item.getName().equals("Bones")).stream().forEach(item -> item.interact("Bury"));
 			} else if (bankArea.contains(getLocalPlayer())) {
-				s.setState(4);  //Bank
-			} else {
-				s.setState(3);  //Walk to Bank
-			}
-		} else {
-			if (kArea.contains(getLocalPlayer())) {
-				lootItem = getGroundItems().closest(
-						groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
-								.getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
-								.anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
-				if (lootItem != null && !getLocalPlayer().isInCombat()) {
-					s.setState(5);  //Loot
-				} else {
-					s.setState(2);  //Attack
-				}
-			} else {
-				s.setState(6);  //Walk back
-			}
-		}
-	}
+                                s.setState(State.BANK);  //Bank
+                        } else {
+                                s.setState(State.MOVE_TO_BANK);  //Walk to Bank
+                        }
+                } else {
+                        if (kArea.contains(getLocalPlayer())) {
+                                lootItem = getGroundItems().closest(
+                                                groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
+                                                                .getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
+                                                                .anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
+                                if (lootItem != null && !getLocalPlayer().isInCombat()) {
+                                        s.setState(State.LOOT);  //Loot
+                                } else {
+                                        s.setState(State.ATTACK);  //Attack
+                                }
+                        } else {
+                                s.setState(State.RETURN);  //Walk back
+                        }
+                }
+        }
 
 	private int bank() {  //4th state
 		if (getBank().isOpen()) {
@@ -174,26 +185,28 @@ public class Main extends AbstractScript {
 		5 - Loot
 		6 - Return
 		*/
-		switch (s.getState()) {
-			case 2:
-				return checkCombat();
-			case 3:
-				moveToBank();
-				break;
-			case 4:
-				return bank();
-			case 5:
-				loot();
-				break;
-			case 6:
-				walkBack();
-				break;
-			case 7:
-				antiBan();
-				break;
-		}
+                switch (s.getState()) {
+                        case ATTACK:
+                                return checkCombat();
+                        case MOVE_TO_BANK:
+                                moveToBank();
+                                break;
+                        case BANK:
+                                return bank();
+                        case LOOT:
+                                loot();
+                                break;
+                        case RETURN:
+                                walkBack();
+                                break;
+                        case ANTIBAN:
+                                antiBan();
+                                break;
+                        default:
+                                break;
+                }
 
-		//DEFAULT:
-		return ((int) (Math.random() * 200));
-	}
+                //DEFAULT:
+                return ((int) (Math.random() * 200));
+        }
 }

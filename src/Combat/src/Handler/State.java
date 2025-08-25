@@ -11,12 +11,13 @@ import javax.swing.SwingUtilities;
 
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private boolean buryBones, takeOtherPlayersLoot;
-	private String target, food;
-	private int eatPercentage, bankLocation, foodAmt, fightRadius, state = 0;
-	private List<String> loot;
+        private JFrame frame;
+        private Window window;
+        private boolean buryBones, takeOtherPlayersLoot;
+        private String target, food;
+        private int eatPercentage, bankLocation, foodAmt, fightRadius;
+        private Combat.Main.State state = Combat.Main.State.SETUP;
+        private List<String> loot;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -71,13 +72,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public Combat.Main.State getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(Combat.Main.State s) {
+                state = s;
+        }
 
 	public String getTarget() {
 		return target;
