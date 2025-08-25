@@ -47,27 +47,33 @@ public class Main extends AbstractScript {
 		return smeltArea.getRandomTile();
 	}
 
-	private Area getSmeltArea() {
-		switch (s.getSmeltLocation()) {
-			case 0:
-				return new Area(3274, 3184, 3279, 3188, 0);
-			case 1:
-				return new Tile(2973, 3370, 0).getArea(2);
-		}
-		return null;
-	}
+        private Area getSmeltArea() {
+                switch (s.getSmeltLocation()) {
+                        case 0:
+                                return new Area(3274, 3184, 3279, 3188, 0);
+                        case 1:
+                                return new Tile(2973, 3370, 0).getArea(2);
+                        default:
+                                log("Invalid smelt location: " + s.getSmeltLocation());
+                                stop();
+                                return BankLocation.getNearest(getLocalPlayer()).getArea(3);
+                }
+        }
 
-	private Product getJewelery() {
-		switch (s.getProduct()) {
-			case 0:
-				return Product.AMULET;
-			case 1:
-				return Product.NECKLACE;
-			case 2:
-				return Product.RING;
-		}
-		return null;
-	}
+        private Product getJewelery() {
+                switch (s.getProduct()) {
+                        case 0:
+                                return Product.AMULET;
+                        case 1:
+                                return Product.NECKLACE;
+                        case 2:
+                                return Product.RING;
+                        default:
+                                log("Invalid product selection: " + s.getProduct());
+                                stop();
+                                return Product.RING;
+                }
+        }
 
 	private Area getBankArea() {
 		switch (s.getSmeltLocation()) {
