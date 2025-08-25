@@ -84,21 +84,28 @@ public class Main extends AbstractScript {
 				s.setState(3);  //Walk to Bank
 			}
 		} else {
-			if (kArea.contains(getLocalPlayer())) {
-				lootItem = getGroundItems().closest(
-						groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
-								.getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
-								.anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
-				if (lootItem != null && !getLocalPlayer().isInCombat()) {
-					s.setState(5);  //Loot
-				} else {
-					s.setState(2);  //Attack
-				}
-			} else {
-				s.setState(6);  //Walk back
-			}
-		}
-	}
+                        if (kArea.contains(getLocalPlayer())) {
+                                if (target == null || !target.exists()) {
+                                        target = getNpcs().closest(targetfilter);
+                                }
+                                if (target != null) {
+                                        lootItem = getGroundItems().closest(
+                                                        groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
+                                                                        .getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
+                                                                        .anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
+                                        if (lootItem != null && !getLocalPlayer().isInCombat()) {
+                                                s.setState(5);  //Loot
+                                        } else {
+                                                s.setState(2);  //Attack
+                                        }
+                                } else {
+                                        s.setState(2);  //Attack
+                                }
+                        } else {
+                                s.setState(6);  //Walk back
+                        }
+                }
+        }
 
 	private int bank() {  //4th state
 		if (getBank().isOpen()) {
