@@ -9,6 +9,7 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
+import java.util.concurrent.CountDownLatch;
 
 @ScriptManifest(category = Category.MINING, name = "Miner.01", author = "Andrew", version = .01)
 public class Main extends AbstractScript {
@@ -17,14 +18,17 @@ public class Main extends AbstractScript {
 	private Area mArea, bankArea;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		init();
-	}
+public void onStart() { //0th state
+super.onStart();
+CountDownLatch latch = new CountDownLatch(1);
+s = new State(latch::countDown);
+try {
+latch.await();
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+init();
+}
 
 	private void init() { //1st state
 		mArea = Area.generateArea(s.getRadius(), getLocalPlayer().getTile());

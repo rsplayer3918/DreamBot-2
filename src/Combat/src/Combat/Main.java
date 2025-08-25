@@ -10,6 +10,7 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.items.GroundItem;
+import java.util.concurrent.CountDownLatch;
 
 @ScriptManifest(category = Category.COMBAT, name = "Combat.01", author = "Andrew", version = .01)
 
@@ -22,17 +23,20 @@ public class Main extends AbstractScript {
 	private GroundItem lootItem;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		for (String s : s.getLoot()) {
-			log("Looting:" + s);
-		}
-		init();
-	}
+public void onStart() { //0th state
+super.onStart();
+CountDownLatch latch = new CountDownLatch(1);
+s = new State(latch::countDown);
+try {
+latch.await();
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+for (String s : s.getLoot()) {
+log("Looting:" + s);
+}
+init();
+}
 
 	private void init() { //1st state
 		kArea = Area.generateArea(s.getFightRadius(), getLocalPlayer().getTile());

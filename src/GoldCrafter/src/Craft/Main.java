@@ -11,6 +11,7 @@ import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.widgets.WidgetChild;
+import java.util.concurrent.CountDownLatch;
 
 @ScriptManifest(category = Category.CRAFTING, name = "Crafting.01", author = "Andrew", version = .01)
 
@@ -25,15 +26,17 @@ public class Main extends AbstractScript {
 	private WidgetChild wig;
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			log("Starting");
-			sleep(200);
-		}
-		init();
-	}
+public void onStart() { //0th state
+super.onStart();
+CountDownLatch latch = new CountDownLatch(1);
+s = new State(latch::countDown);
+try {
+latch.await();
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+init();
+}
 
 	private void init() { //1st state
 		bankArea = getBankArea();

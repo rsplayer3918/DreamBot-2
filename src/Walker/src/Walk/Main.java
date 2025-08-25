@@ -9,6 +9,7 @@ import org.dreambot.api.methods.map.Tile;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
+import java.util.concurrent.CountDownLatch;
 
 @ScriptManifest(category = Category.MISC, name = "Walker.01", author = "Andrew", version = .01)
 
@@ -21,14 +22,17 @@ public class Main extends AbstractScript {
 
 
 	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		init();
-	}
+public void onStart() { //0th state
+super.onStart();
+CountDownLatch latch = new CountDownLatch(1);
+s = new State(latch::countDown);
+try {
+latch.await();
+} catch (InterruptedException e) {
+e.printStackTrace();
+}
+init();
+}
 
 	private void init() { //1st state
 		generateDestination();
