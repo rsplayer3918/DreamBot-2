@@ -1,7 +1,7 @@
 package Walk;
 
 
-import Handler.State;
+import walker.state.WalkerState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -14,7 +14,7 @@ import org.dreambot.api.script.ScriptManifest;
 
 public class Main extends AbstractScript {
 
-	private State s;
+        private WalkerState s;
 	private Area destinationA = null;
 	private Tile destinationT = null;
 	private int reactionDistance;
@@ -23,7 +23,7 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new WalkerState();
 		while (s.getState() < 1) {
 			sleep(100);
 		}

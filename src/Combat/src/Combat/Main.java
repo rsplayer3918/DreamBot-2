@@ -1,6 +1,6 @@
 package Combat;
 
-import Handler.State;
+import combat.state.CombatState;
 import java.util.Random;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
@@ -17,14 +17,14 @@ public class Main extends AbstractScript {
 
 	private Filter<NPC> targetfilter;
 	private Area kArea, bankArea;
-	private State s;
+        private CombatState s;
 	private NPC target;
 	private GroundItem lootItem;
 
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new CombatState();
 		while (s.getState() < 1) {
 			sleep(100);
 		}

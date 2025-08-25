@@ -1,6 +1,6 @@
 package GUI;
 
-import Handler.State;
+import wc.state.WCState;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,13 +18,13 @@ public class Window extends JFrame {
 	private JComboBox walkLocation, logType;
 	private JTextField radius;
 	private JTabbedPane Bank;
-	private State s;
+        private WCState s;
 
 	public Window() {
 	}
 
-	public Window(State s) {
-		this.s = s;
+        public Window(WCState s) {
+                this.s = s;
 		startButton.addActionListener(actionEvent -> {
 			s.setState(1);
 			s.setBankLocation(walkLocation.getSelectedIndex());

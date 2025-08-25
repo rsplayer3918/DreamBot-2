@@ -1,7 +1,7 @@
 package Walk;
 
 
-import Handler.State;
+import template.state.TemplateState;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
@@ -11,12 +11,12 @@ import org.dreambot.api.script.ScriptManifest;
 
 public class Main extends AbstractScript {
 
-	private State s;
+        private TemplateState s;
 
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
+                s = new TemplateState();
 		while (s.getState() < 1) {
 			sleep(100);
 		}

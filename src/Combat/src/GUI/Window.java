@@ -1,6 +1,6 @@
 package GUI;
 
-import Handler.State;
+import combat.state.CombatState;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -25,13 +25,13 @@ public class Window extends JFrame {
 	private JCheckBox takeAllCheckBox, buryBonesCheckBox;
 	private JButton startButton;
 	private Slider eatSlider;
-	private State s;
+        private CombatState s;
 
 	public Window() {
 	}
 
-	public Window(State s) {
-		this.s = s;
+        public Window(CombatState s) {
+                this.s = s;
 		startButton.addActionListener(actionEvent -> {
 			s.setTarget(targetField.getText());
 			s.setFoodAmt(FoodAmtField.getText());
