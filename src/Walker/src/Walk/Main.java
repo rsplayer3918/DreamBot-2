@@ -37,11 +37,12 @@ public class Main extends AbstractScript {
 	private void generateDestination() {
 		Tile tmpTile = null;
 		switch (s.getDestination()) {
-			case 0: //Al Kharid bank
-				destinationA = BankLocation.AL_KHARID.getArea(3);
-			case 1: //Al Kharid mining spot (3296, 3277, 0)
-				tmpTile = new Tile(3296, 3777, 0);
-				break;
+                        case 0: //Al Kharid bank
+                                destinationA = BankLocation.AL_KHARID.getArea(3);
+                                break;
+                        case 1: //Al Kharid mining spot (3296, 3277, 0)
+                                tmpTile = new Tile(3296, 3277, 0);
+                                break;
 			case 2: //Barbarian Village (3092, 2421, 0)
 				tmpTile = new Tile(3092, 2421, 0);
 				break;
@@ -130,10 +131,11 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2:
-				move();
-		}
+                switch (s.getState()) {
+                        case 2:
+                                move();
+                                break;
+                }
 		//RUN EVERY SECOND-ISH
 		return Calculations.random(50, 100);
 	}
