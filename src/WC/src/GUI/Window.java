@@ -1,14 +1,14 @@
 package GUI;
 
 import Handler.State;
+import common.gui.ScriptWindow;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
-public class Window extends JFrame {
+public class Window extends ScriptWindow {
 
 	public static final int W = 400, H = 250;
 	public static final String TITLE = "Yet Another RuneScape main bot";
@@ -20,22 +20,21 @@ public class Window extends JFrame {
 	private JTabbedPane Bank;
 	private State s;
 
-	public Window() {
-	}
+        public Window(State s) {
+                super(TITLE, W, H);
+                this.s = s;
+                startButton.addActionListener(actionEvent -> {
+                        s.setState(1);
+                        s.setBankLocation(walkLocation.getSelectedIndex());
+                        s.setTree(logType.getSelectedIndex());
+                        s.setRadius(radius.getText());
+                        s.killFrame();
+                });
+                setup(RootPanel);
+        }
 
-	public Window(State s) {
-		this.s = s;
-		startButton.addActionListener(actionEvent -> {
-			s.setState(1);
-			s.setBankLocation(walkLocation.getSelectedIndex());
-			s.setTree(logType.getSelectedIndex());
-			s.setRadius(radius.getText());
-			s.killFrame();
-		});
-	}
-
-	public JPanel getRootPanel() {
-		return RootPanel;
-	}
+        public JPanel getRootPanel() {
+                return RootPanel;
+        }
 
 }
