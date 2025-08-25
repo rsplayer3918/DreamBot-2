@@ -75,30 +75,38 @@ public class Main extends AbstractScript {
 	}
 
 	private void checkState() {
-		if (getInventory().isFull()) {
-			if (s.isBuryBones() && getInventory().contains("Bones")) {
-				getInventory().all(item -> item.getName().equals("Bones")).stream().forEach(item -> item.interact("Bury"));
-			} else if (bankArea.contains(getLocalPlayer())) {
-				s.setState(4);  //Bank
-			} else {
-				s.setState(3);  //Walk to Bank
-			}
-		} else {
-			if (kArea.contains(getLocalPlayer())) {
-				lootItem = getGroundItems().closest(
-						groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
-								.getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
-								.anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
-				if (lootItem != null && !getLocalPlayer().isInCombat()) {
-					s.setState(5);  //Loot
-				} else {
-					s.setState(2);  //Attack
-				}
-			} else {
-				s.setState(6);  //Walk back
-			}
-		}
-	}
+               if (getInventory().isFull()) {
+                       if (s.isBuryBones() && getInventory().contains("Bones")) {
+                               getInventory().all(item -> item.getName().equals("Bones")).stream().forEach(item -> item.interact("Bury"));
+                       } else if (bankArea.contains(getLocalPlayer())) {
+                               s.setState(4);  //Bank
+                       } else {
+                               s.setState(3);  //Walk to Bank
+                       }
+               } else {
+                       if (kArea.contains(getLocalPlayer())) {
+                               if (target == null || !target.exists()) {
+                                       target = getNpcs().closest(targetfilter);
+                                       if (target == null) {
+                                               log("No valid target found");
+                                               s.setState(7); // Skip combat
+                                               return;
+                                       }
+                               }
+                               lootItem = getGroundItems().closest(
+                                               groundItem -> groundItem != null && groundItem.exists() && groundItem.getName() != null && (target
+                                                               .getSurroundingArea(1)).contains(groundItem) && s.getLoot().stream()
+                                                               .anyMatch(lootStr -> lootStr.equals(groundItem.getName())));
+                               if (lootItem != null && !getLocalPlayer().isInCombat()) {
+                                       s.setState(5);  //Loot
+                               } else {
+                                       s.setState(2);  //Attack
+                               }
+                       } else {
+                               s.setState(6);  //Walk back
+                       }
+               }
+       }
 
 	private int bank() {  //4th state
 		if (getBank().isOpen()) {
@@ -121,28 +129,42 @@ public class Main extends AbstractScript {
 	}
 
 	/////////////////////2nd STATE/////////////////////////
-	private int checkCombat() {
-		if (!target.exists()) {
-			target = getNpcs().closest(targetfilter);
-			getCamera().rotateToEntity(target);
-		}
-		if (getLocalPlayer().getHealthPercent() < s.getEatPercentage()) { //Eat if Low
-			getInventory().interact(s.getFood(), "Eat");
-			sleep(100, 300);
-		}
-		if (!getLocalPlayer().isInCombat()) {
-			target.interact("Attack");
-			sleepUntil(() -> {
-				sleep(100);
-				return getLocalPlayer().isInCombat();
-			}, 2000);
-			sleepUntil(() -> {
-				sleep(100);
-				return !getLocalPlayer().isInCombat();
-			}, 10000);
-		}
-		return (int) (Math.random() * 201);
-	}
+       private int checkCombat() {
+               if (target == null || !target.exists()) {
+                       target = getNpcs().closest(targetfilter);
+                       if (target != null) {
+                               getCamera().rotateToEntity(target);
+                       } else {
+                               log("No valid target found");
+                               s.setState(7); // Skip combat
+                               return (int) (Math.random() * 201);
+                       }
+               }
+               if (getLocalPlayer().getHealthPercent() < s.getEatPercentage()) { //Eat if Low
+                       getInventory().interact(s.getFood(), "Eat");
+                       sleep(100, 300);
+               }
+               if (!getLocalPlayer().isInCombat()) {
+                       if (target == null || !target.exists()) {
+                               target = getNpcs().closest(targetfilter);
+                               if (target == null) {
+                                       log("No valid target found");
+                                       s.setState(7); // Skip combat
+                                       return (int) (Math.random() * 201);
+                               }
+                       }
+                       target.interact("Attack");
+                       sleepUntil(() -> {
+                               sleep(100);
+                               return getLocalPlayer().isInCombat();
+                       }, 2000);
+                       sleepUntil(() -> {
+                               sleep(100);
+                               return !getLocalPlayer().isInCombat();
+                       }, 10000);
+               }
+               return (int) (Math.random() * 201);
+       }
 
 	/////////////////////5th State/////////////////////////
 	private void loot() {
