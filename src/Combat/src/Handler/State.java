@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import SuperBot.SuperBotConfig;
 
 public class State {
 
@@ -16,11 +17,11 @@ public class State {
 	private boolean buryBones, takeOtherPlayersLoot;
 	private String target, food;
 	private int eatPercentage, bankLocation, foodAmt, fightRadius, state = 0;
-	private List<String> loot;
+        private List<String> loot;
 
-	public State() {
-		SwingUtilities.invokeLater(() -> {
-			window = new Window(this);
+        public State() {
+                SwingUtilities.invokeLater(() -> {
+                        window = new Window(this);
 			setFrame(new JFrame(Window.TITLE));
 			getFrame().setSize(Window.W, Window.H);
 			getFrame().setLocationRelativeTo(null);
@@ -28,9 +29,22 @@ public class State {
 			getFrame().setContentPane(window.getRootPanel());
 			getFrame().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			getFrame().pack();
-			getFrame().setVisible(true);
-		});
-	}
+                        getFrame().setVisible(true);
+                });
+        }
+
+        public State(SuperBotConfig.CombatConfig config) {
+                this.buryBones = config.buryBones;
+                this.takeOtherPlayersLoot = config.takeOtherPlayersLoot;
+                this.target = config.target;
+                this.food = config.food;
+                this.eatPercentage = config.eatPercentage;
+                this.bankLocation = config.bankLocation;
+                this.foodAmt = config.foodAmount;
+                this.fightRadius = config.fightRadius;
+                this.loot = config.loot != null ? config.loot : new ArrayList<>();
+                this.state = 1;
+        }
 
 	public void killFrame() {
 		try {
