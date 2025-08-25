@@ -1,5 +1,6 @@
 package WC;
 
+import Handler.BotState;
 import Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
@@ -58,10 +59,10 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
+                s = new State();
+                while (s.getState() == BotState.INIT) {
+                        sleep(100);
+                }
 		init();
 	}
 
@@ -73,19 +74,19 @@ public class Main extends AbstractScript {
 
 	private void checkState() {
 		if (getInventory().isFull()) {
-			if (bArea.contains(getLocalPlayer())) { //Bank
-				s.setState(4);
-			} else {  //Move to bank
-				s.setState(3);
-			}
-		} else if (!cArea.contains(getLocalPlayer())) {
-			s.setState(5);
-		} else {
-			if (!getLocalPlayer().isAnimating()) {
-				s.setState(2);  //Find next tree to chop
-			}
-		}
-	}
+                        if (bArea.contains(getLocalPlayer())) { //Bank
+                                s.setState(BotState.BANK);
+                        } else {  //Move to bank
+                                s.setState(BotState.MOVE_TO_BANK);
+                        }
+                } else if (!cArea.contains(getLocalPlayer())) {
+                        s.setState(BotState.WALK_BACK);
+                } else {
+                        if (!getLocalPlayer().isAnimating()) {
+                                s.setState(BotState.CUT);  //Find next tree to chop
+                        }
+                }
+        }
 
 
 	private void moveToBank() {  //////////////3rd state////////////////
@@ -124,20 +125,22 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2: //Cut
-				cut();
-				break;
-			case 3:  //Move to bank
-				moveToBank();
-				break;
-			case 4:
-				bank();
-				break;
-			case 5: //Move back
-				walkBack();
-				break;
-		}
+                switch (s.getState()) {
+                        case CUT: //Cut
+                                cut();
+                                break;
+                        case MOVE_TO_BANK:  //Move to bank
+                                moveToBank();
+                                break;
+                        case BANK:
+                                bank();
+                                break;
+                        case WALK_BACK: //Move back
+                                walkBack();
+                                break;
+                        default:
+                                break;
+                }
 
 		//RUN EVERY SECOND-ISH
 		return Calculations.random(200, 500);

@@ -1,5 +1,6 @@
 package GUI;
 
+import Handler.BotState;
 import Handler.State;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -41,10 +42,10 @@ public class Window extends JFrame {
 			s.setBuryBones(buryBonesCheckBox.isSelected());
 			s.setTakeOtherPlayersLoot(takeAllCheckBox.isSelected());
 			s.setBankLocation(bankLocation.getSelectedIndex());
-			s.setEatPercentage(eatSlider.getValue());
-			s.setState(1);
-			s.killFrame();
-		});
+                          s.setEatPercentage(eatSlider.getValue());
+                          s.setState(BotState.IDLE);
+                          s.killFrame();
+                  });
 	}
 
 	public JPanel getRootPanel() {

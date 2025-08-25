@@ -1,6 +1,7 @@
 package Walk;
 
 
+import Handler.BotState;
 import Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
@@ -23,10 +24,10 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
+                s = new State();
+                while (s.getState() == BotState.INIT) {
+                        sleep(100);
+                }
 		init();
 	}
 
@@ -104,12 +105,12 @@ public class Main extends AbstractScript {
 	}
 
 	private void checkState() {
-		if (!destinationA.contains(getLocalPlayer())) {
-			s.setState(2);
-		} else {
-			stop();
-		}
-	}
+                if (!destinationA.contains(getLocalPlayer())) {
+                        s.setState(BotState.MOVE);
+                } else {
+                        stop();
+                }
+        }
 
 	private void move() {
 		generateDestination();
@@ -130,10 +131,13 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2:
-				move();
-		}
+                switch (s.getState()) {
+                        case MOVE:
+                                move();
+                                break;
+                        default:
+                                break;
+                }
 		//RUN EVERY SECOND-ISH
 		return Calculations.random(50, 100);
 	}

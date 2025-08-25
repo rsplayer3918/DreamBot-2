@@ -1,5 +1,6 @@
 package Craft;
 
+import Handler.BotState;
 import Handler.State;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
@@ -27,11 +28,11 @@ public class Main extends AbstractScript {
 	@Override
 	public void onStart() { //0th state
 		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			log("Starting");
-			sleep(200);
-		}
+                s = new State();
+                while (s.getState() == BotState.INIT) {
+                        log("Starting");
+                        sleep(200);
+                }
 		init();
 	}
 
@@ -181,18 +182,18 @@ public class Main extends AbstractScript {
 
 	private void checkState() {
 		if (getInventory().contains(GOLD_BAR_ID)) {
-			if (smeltArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
-				s.setState(3);
-			} else {
-				s.setState(2);
-			}
-		} else {
-			if (bankArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
-				s.setState(4);
-			} else {
-				s.setState(5);
-			}
-		}
+                        if (smeltArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
+                                s.setState(BotState.MOVE_TO_SMELT);
+                        } else {
+                                s.setState(BotState.SMELT);
+                        }
+                } else {
+                        if (bankArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
+                                s.setState(BotState.MOVE_TO_BANK);
+                        } else {
+                                s.setState(BotState.BANK);
+                        }
+                }
 		/*
 		3 - move to smelt
 		2 - smelt
@@ -204,20 +205,22 @@ public class Main extends AbstractScript {
 	@Override
 	public int onLoop() {
 		checkState();
-		switch (s.getState()) {
-			case 2:
-				smelt();
-				break;
-			case 3:
-				moveToSmelt();
-				break;
-			case 4:
-				moveToBank();
-				break;
-			case 5:
-				bank();
-				break;
-		}
+                switch (s.getState()) {
+                        case SMELT:
+                                smelt();
+                                break;
+                        case MOVE_TO_SMELT:
+                                moveToSmelt();
+                                break;
+                        case MOVE_TO_BANK:
+                                moveToBank();
+                                break;
+                        case BANK:
+                                bank();
+                                break;
+                        default:
+                                break;
+                }
 		return Calculations.random(50, 100);
 	}
 

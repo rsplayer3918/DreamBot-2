@@ -1,5 +1,6 @@
 package Miner.GUI;
 
+import Miner.Handler.BotState;
 import Miner.Handler.State;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -32,12 +33,12 @@ public class Window extends JFrame {
 	public Window(State s) {
 		this.s = s;
 		startButton.addActionListener(actionEvent -> {
-			s.setRadius(radiusField.getText());
-			s.setDrop(dropAll.isSelected());
-			s.setBankArea(bankLocation.getSelectedIndex());
-			s.setState(1);
-			s.killFrame();
-		});
+                          s.setRadius(radiusField.getText());
+                          s.setDrop(dropAll.isSelected());
+                          s.setBankArea(bankLocation.getSelectedIndex());
+                          s.setState(BotState.IDLE);
+                          s.killFrame();
+                  });
 	}
 
 	public JPanel getRootPanel() {

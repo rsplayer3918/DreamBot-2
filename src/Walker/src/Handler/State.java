@@ -6,12 +6,17 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Tracks the walker script's current {@link BotState}.
+ */
+
 public class State {
 
-	private JFrame frame;
-	private Window window;
+        private JFrame frame;
+        private Window window;
 
-	private int destination = 0, state = 0;
+        private int destination = 0;
+        private BotState state = BotState.INIT;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -45,13 +50,13 @@ public class State {
 		this.destination = destination;
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(BotState s) {
+                state = s;
+        }
 
 
 }

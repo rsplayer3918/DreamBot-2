@@ -6,11 +6,15 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+/**
+ * Maintains the {@link BotState} for the template script.
+ */
+
 public class State {
 
-	private JFrame frame;
-	private Window window;
-	private int state = 0;
+        private JFrame frame;
+        private Window window;
+        private BotState state = BotState.INIT;
 
 	public State() {
 		SwingUtilities.invokeLater(() -> {
@@ -36,13 +40,13 @@ public class State {
 		}
 	}
 
-	public int getState() {
-		return state;
-	}
+        public BotState getState() {
+                return state;
+        }
 
-	public void setState(int s) {
-		state = s;
-	}
+        public void setState(BotState s) {
+                state = s;
+        }
 
 
 }
