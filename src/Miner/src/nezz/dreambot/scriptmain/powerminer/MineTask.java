@@ -1,6 +1,9 @@
 package nezz.dreambot.scriptmain.powerminer;
 
 import java.util.List;
+
+import nezz.dreambot.tasks.Task;
+import nezz.dreambot.tasks.XpMonitor;
 import nezz.dreambot.tools.PricedItem;
 import org.dreambot.api.methods.MethodContext;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
@@ -11,7 +14,7 @@ import org.dreambot.api.utilities.Timer;
 import org.dreambot.api.wrappers.interactive.GameObject;
 import org.dreambot.api.wrappers.items.Item;
 
-public class MineTask {
+public class MineTask implements Task {
 
 	private String goal = "";
 	private Tile startTile = null;
@@ -65,31 +68,42 @@ public class MineTask {
 		return this.dontMove;
 	}
 
-	public void resetTimer() {
-		t = new Timer();
-	}
+        public void resetTimer() {
+                t = new Timer();
+        }
 
-	public boolean reachedGoal() {
-		if (goal.toLowerCase().contains("bank")) {
-			Item ore = ctx.getBank().get(oreName);
-			if (ore == null) {
-				return false;
-			} else {
-				if (ore.getAmount() >= Integer.parseInt(goal.split("=")[1])) {
-					this.finished = true;
-					return true;
-				}
-				return false;
-			}
-		} else if (goal.toLowerCase().contains("level")) {
-			this.finished = ctx.getSkills().getRealLevel(Skill.MINING) >= Integer.parseInt(goal.split("=")[1]);
-			return finished;
-		} else if (goal.toLowerCase().contains("mine")) {
-			this.finished = oreTracker.getAmount() >= Integer.parseInt(goal.split("=")[1]);
-			return finished;
-		}
-		return false;
-	}
+        @Override
+        public boolean reachedGoal(XpMonitor monitor) {
+                if (goal.toLowerCase().contains("bank")) {
+                        Item ore = ctx.getBank().get(oreName);
+                        if (ore == null) {
+                                return false;
+                        } else {
+                                if (ore.getAmount() >= Integer.parseInt(goal.split("=")[1])) {
+                                        this.finished = true;
+                                        return true;
+                                }
+                                return false;
+                        }
+                } else if (goal.toLowerCase().contains("level")) {
+                        this.finished = monitor.reachedLevel(Skill.MINING, Integer.parseInt(goal.split("=")[1]));
+                        return finished;
+                } else if (goal.toLowerCase().contains("xp")) {
+                        this.finished = monitor.reachedExperience(Skill.MINING, Integer.parseInt(goal.split("=")[1]));
+                        return finished;
+                } else if (goal.toLowerCase().contains("mine")) {
+                        this.finished = oreTracker.getAmount() >= Integer.parseInt(goal.split("=")[1]);
+                        return finished;
+                }
+                return false;
+        }
+
+        @Override
+        public void reset() {
+                resetTimer();
+                oreTracker.setAmount(0);
+                finished = false;
+        }
 
 	private GameObject getClosest(List<GameObject> rocks) {
 		GameObject currRock = null;
