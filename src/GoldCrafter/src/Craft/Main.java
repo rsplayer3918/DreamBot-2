@@ -1,6 +1,7 @@
 package Craft;
 
 import Handler.State;
+import common.Config;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.map.Area;
@@ -16,8 +17,7 @@ import org.dreambot.api.wrappers.widgets.WidgetChild;
 
 public class Main extends AbstractScript {
 
-	private final int FURNACE_ID = 24009, GOLD_BAR_ID = 2357;
-	private Product jewelery;
+        private Product jewelery;
 
 	private State s;
 	private Area bankArea, smeltArea;
@@ -48,13 +48,13 @@ public class Main extends AbstractScript {
 	}
 
 	private Area getSmeltArea() {
-		switch (s.getSmeltLocation()) {
-			case 0:
-				return new Area(3274, 3184, 3279, 3188, 0);
-			case 1:
-				return new Tile(2973, 3370, 0).getArea(2);
-		}
-		return null;
+                switch (s.getSmeltLocation()) {
+                        case 0:
+                                return Config.AL_KHARID_SMELT_AREA;
+                        case 1:
+                                return new Tile(2973, 3370, 0).getArea(2);
+                }
+                return null;
 	}
 
 	private Product getJewelery() {
@@ -70,13 +70,13 @@ public class Main extends AbstractScript {
 	}
 
 	private Area getBankArea() {
-		switch (s.getSmeltLocation()) {
-			case 0:   //Al Kharid bank
-				return new Area(3269, 3166, 3271, 3169, 0);
-			case 1:  //:
-				break;
-		}
-		return BankLocation.getNearest(getLocalPlayer()).getArea(3);
+                switch (s.getSmeltLocation()) {
+                        case 0:   //Al Kharid bank
+                                return Config.AL_KHARID_BANK_AREA;
+                        case 1:  //:
+                                break;
+                }
+                return BankLocation.getNearest(getLocalPlayer()).getArea(3);
 	}
 
 	private Tile getBankTile() {
@@ -125,7 +125,7 @@ public class Main extends AbstractScript {
 						int startLvl = getSkills().getRealLevel(Skill.CRAFTING);
 						sleepUntil((() -> {
 							sleep(1000);
-							return !getInventory().contains(GOLD_BAR_ID) || startLvl != getSkills().getRealLevel(Skill.CRAFTING);
+                                                        return !getInventory().contains(Config.GOLD_BAR_ID) || startLvl != getSkills().getRealLevel(Skill.CRAFTING);
 						}), 120000);
 						log("Done");
 						sleep(Calculations.random(500, 2500));
@@ -133,8 +133,8 @@ public class Main extends AbstractScript {
 					}
 				}
 			} else {
-				if (Math.random() > .05) {
-					getGameObjects().closest(FURNACE_ID).interact("Smelt");
+                                if (Calculations.random(0.0, 1.0) > 0.05) {
+                                        getGameObjects().closest(Config.FURNACE_ID).interact("Smelt");
 					log("Interacting by smelt");
 				} else if (!wig.isVisible()) {
 					if (!getTabs().isOpen(Tab.INVENTORY)) {
@@ -142,7 +142,7 @@ public class Main extends AbstractScript {
 						sleep(400, 500);
 						log("Switching to inv");
 					}
-					getInventory().get(GOLD_BAR_ID).useOn(getGameObjects().closest(FURNACE_ID));
+                                        getInventory().get(Config.GOLD_BAR_ID).useOn(getGameObjects().closest(Config.FURNACE_ID));
 					log("Using gold bar on furnace");
 					sleep(100);
 				}
@@ -164,8 +164,8 @@ public class Main extends AbstractScript {
 					sleep(500, 600);
 				}
 			}
-			if (getBank().contains(GOLD_BAR_ID)) {
-				getBank().withdrawAll(GOLD_BAR_ID);
+                        if (getBank().contains(Config.GOLD_BAR_ID)) {
+                                getBank().withdrawAll(Config.GOLD_BAR_ID);
 				sleep(500, 600);
 			} else {
 				log("Ran out of gold bars");
@@ -176,11 +176,11 @@ public class Main extends AbstractScript {
 			getBank().openClosest();
 			sleepUntil(() -> getBank().isOpen(), 1500);
 		}
-		return (int) (Math.random() * 51) + 200;
+                return Calculations.random(200, 250);
 	}
 
 	private void checkState() {
-		if (getInventory().contains(GOLD_BAR_ID)) {
+                if (getInventory().contains(Config.GOLD_BAR_ID)) {
 			if (smeltArea.getNearestTile(getLocalPlayer()).distance() > Calculations.random(4, 11)) {
 				s.setState(3);
 			} else {

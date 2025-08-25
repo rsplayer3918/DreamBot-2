@@ -2,6 +2,7 @@ package Combat;
 
 import Handler.State;
 import java.util.Random;
+import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.bank.BankLocation;
 import org.dreambot.api.methods.filter.Filter;
 import org.dreambot.api.methods.map.Area;
@@ -109,7 +110,7 @@ public class Main extends AbstractScript {
 			getBank().openClosest();
 			sleepUntil(() -> getBank().isOpen(), 1500);
 		}
-		return (int) (Math.random() * 51) + 200;
+                return Calculations.random(200, 250);
 	}
 
 	private void moveToBank() {  //////////////3rd state////////////////
@@ -141,7 +142,7 @@ public class Main extends AbstractScript {
 				return !getLocalPlayer().isInCombat();
 			}, 10000);
 		}
-		return (int) (Math.random() * 201);
+                return Calculations.random(0, 200);
 	}
 
 	/////////////////////5th State/////////////////////////
@@ -194,6 +195,6 @@ public class Main extends AbstractScript {
 		}
 
 		//DEFAULT:
-		return ((int) (Math.random() * 200));
+                return Calculations.random(0, 199);
 	}
 }

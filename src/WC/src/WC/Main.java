@@ -101,7 +101,7 @@ public class Main extends AbstractScript {
 			getBank().openClosest();
 			sleepUntil(() -> getBank().isOpen(), 1500);
 		}
-		return (int) (Math.random() * 51) + 200;
+                return Calculations.random(200, 250);
 	}
 
 	private void cut() {
