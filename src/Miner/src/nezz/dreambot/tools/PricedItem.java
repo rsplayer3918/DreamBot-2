@@ -18,17 +18,13 @@ public class PricedItem {
 		if (ctx.getInventory().contains(name)) {
 			lastCount = (int) ctx.getInventory().count(name);
 		}
-		if (getPrice) {
-			String tempName = name;
-			if (name.contains("arrow")) {
-				tempName += "s";
-			}
-			MethodProvider.log("Getting price");
-			price = PriceGrab.getInstance().getPrice(tempName, 2);
-			MethodProvider.log("Got price: " + price);
-		} else {
-			price = 0;
-		}
+                if (getPrice) {
+                        MethodProvider.log("Getting price");
+                        price = PriceGrab.getInstance().getPrice(name, 2);
+                        MethodProvider.log("Got price: " + price);
+                } else {
+                        price = 0;
+                }
 	}
 
 	public PricedItem(String name, int id, MethodContext ctx, boolean getPrice) {
