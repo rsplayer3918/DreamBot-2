@@ -5,8 +5,11 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
+
 import nezz.dreambot.powerminer.gui.ScriptVars;
 import nezz.dreambot.powerminer.gui.minerGui;
+import nezz.dreambot.tasks.TaskManager;
+import nezz.dreambot.tasks.XpMonitor;
 import org.dreambot.api.methods.Calculations;
 import org.dreambot.api.methods.container.impl.Inventory;
 import org.dreambot.api.methods.container.impl.bank.Bank;
@@ -30,11 +33,12 @@ public class Miner extends AbstractScript {
 	//current state
 	private State state;
 	private GameObject currRock = null;
-	//private Tile startTile = null;
-	private MineTask currTask = null;
-	private int taskPlace = 0;
-	private boolean started = false;
-	private minerGui gui = null;
+        //private Tile startTile = null;
+        private MineTask currTask = null;
+        private TaskManager<MineTask> taskManager;
+        private XpMonitor xpMonitor;
+        private boolean started = false;
+        private minerGui gui = null;
 
 	private State getState() {
 		if (!started) {
@@ -51,27 +55,28 @@ public class Miner extends AbstractScript {
 	}
 
 	@Override
-	public void onStart() {
-		getClient().disableIdleCamera();
-		getClient().disableIdleMouse();
-		log("Starting DreamBot AIO Mining script!");
-	}
+        public void onStart() {
+                getClient().disableIdleCamera();
+                getClient().disableIdleMouse();
+                log("Starting DreamBot AIO Mining script!");
+                xpMonitor = new XpMonitor(this);
+        }
 
 	@Override
 	public int onLoop() {
-		if (started) {
-			if (currTask.reachedGoal()) {
-				log("Finished current task!");
-				taskPlace++;
-				if (taskPlace >= sv.tasks.size()) {
-					log("Finished all tasks!");
-					stop();
-					return 1;
-				}
-				currTask = sv.tasks.get(taskPlace);
-				currTask.resetTimer();
-				return 200;
-			}
+                if (started) {
+                        if (taskManager.update(xpMonitor)) {
+                                log("Finished current task! XP/hr: " + xpMonitor.getXpPerHour(Skill.MINING));
+                                if (!taskManager.hasTasks()) {
+                                        log("Finished all tasks!");
+                                        stop();
+                                        return 1;
+                                }
+                                currTask = taskManager.getCurrentTask();
+                                currTask.reset();
+                                xpMonitor.start(Skill.MINING);
+                                return 200;
+                        }
 
 			Player myPlayer = getLocalPlayer();
 			if (!getWalking().isRunEnabled() && getWalking().getRunEnergy() > Calculations.random(30, 70)) {
@@ -100,11 +105,12 @@ public class Miner extends AbstractScript {
 					} else {
 						bank = getBank();
 						inv = getInventory();
-						currTask = sv.tasks.get(0);
-						currTask.resetTimer();
-						getSkillTracker().start(Skill.MINING);
-						timer = new Timer();
-						started = true;
+                                                taskManager = new TaskManager<>(sv.tasks);
+                                                currTask = taskManager.getCurrentTask();
+                                                currTask.reset();
+                                                xpMonitor.start(Skill.MINING);
+                                                timer = new Timer();
+                                                started = true;
 					}
 				}
 				break;
