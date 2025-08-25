@@ -9,6 +9,7 @@ import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.GameObject;
+import SuperBot.SuperBotConfig;
 
 @ScriptManifest(category = Category.WOODCUTTING, name = "WC.01", author = "Andrew", version = .01)
 
@@ -55,15 +56,20 @@ public class Main extends AbstractScript {
 		return tmp.getArea(3);
 	}
 
-	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			sleep(100);
-		}
-		init();
-	}
+        @Override
+        public void onStart() { //0th state
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        sleep(100);
+                }
+                init();
+        }
+
+        public void onStart(SuperBotConfig.WoodcuttingConfig config) {
+                s = new State(config);
+                init();
+        }
 
 	private void init() { //1st state
 		treeFilter = (tree -> tree.getName().equals(s.getTree()) && cArea.contains(tree));

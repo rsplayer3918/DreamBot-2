@@ -5,16 +5,17 @@ import GUI.Window;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import SuperBot.SuperBotConfig;
 
 public class State {
 
 	private JFrame frame;
-	private Window window;
-	private int state = 0, smeltLocation, product;
+        private Window window;
+        private int state = 0, smeltLocation, product;
 
-	public State() {
-		SwingUtilities.invokeLater(() -> {
-			window = new Window(this);
+        public State() {
+                SwingUtilities.invokeLater(() -> {
+                        window = new Window(this);
 			frame = (new JFrame(Window.TITLE));
 			frame.setSize(Window.W, Window.H);
 			frame.setLocationRelativeTo(null);
@@ -22,9 +23,15 @@ public class State {
 			frame.setContentPane(window.getRootPanel());
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.pack();
-			frame.setVisible(true);
-		});
-	}
+                        frame.setVisible(true);
+                });
+        }
+
+        public State(SuperBotConfig.GoldCraftingConfig config) {
+                this.smeltLocation = config.smeltLocation;
+                this.product = config.product;
+                this.state = 1;
+        }
 
 	public void killFrame() {
 		try {

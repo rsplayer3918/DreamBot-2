@@ -4,17 +4,18 @@ import GUI.Window;
 import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import SuperBot.SuperBotConfig;
 
 public class State {
 
 	private JFrame frame;
-	private Window window;
-	private int bankLocation, state = 0, radius;
-	private String tree;
+        private Window window;
+        private int bankLocation, state = 0, radius;
+        private String tree;
 
-	public State() {
-		SwingUtilities.invokeLater(() -> {
-			window = new Window(this);
+        public State() {
+                SwingUtilities.invokeLater(() -> {
+                        window = new Window(this);
 			frame = (new JFrame(Window.TITLE));
 			frame.setSize(Window.W, Window.H);
 			frame.setLocationRelativeTo(null);
@@ -22,9 +23,16 @@ public class State {
 			frame.setContentPane(window.getRootPanel());
 			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 			frame.pack();
-			frame.setVisible(true);
-		});
-	}
+                        frame.setVisible(true);
+                });
+        }
+
+        public State(SuperBotConfig.WoodcuttingConfig config) {
+                this.bankLocation = config.bankLocation;
+                this.radius = config.radius;
+                this.tree = config.tree;
+                this.state = 1;
+        }
 
 	public String getTree() {
 		return tree;

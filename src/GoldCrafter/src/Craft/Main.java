@@ -11,6 +11,7 @@ import org.dreambot.api.script.AbstractScript;
 import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.widgets.WidgetChild;
+import SuperBot.SuperBotConfig;
 
 @ScriptManifest(category = Category.CRAFTING, name = "Crafting.01", author = "Andrew", version = .01)
 
@@ -24,16 +25,21 @@ public class Main extends AbstractScript {
 	private Tile smeltTile, bankTile;
 	private WidgetChild wig;
 
-	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
-			log("Starting");
-			sleep(200);
-		}
-		init();
-	}
+        @Override
+        public void onStart() { //0th state
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
+                        log("Starting");
+                        sleep(200);
+                }
+                init();
+        }
+
+        public void onStart(SuperBotConfig.GoldCraftingConfig config) {
+                s = new State(config);
+                init();
+        }
 
 	private void init() { //1st state
 		bankArea = getBankArea();

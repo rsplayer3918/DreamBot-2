@@ -10,6 +10,7 @@ import org.dreambot.api.script.Category;
 import org.dreambot.api.script.ScriptManifest;
 import org.dreambot.api.wrappers.interactive.NPC;
 import org.dreambot.api.wrappers.items.GroundItem;
+import SuperBot.SuperBotConfig;
 
 @ScriptManifest(category = Category.COMBAT, name = "Combat.01", author = "Andrew", version = .01)
 
@@ -21,18 +22,23 @@ public class Main extends AbstractScript {
 	private NPC target;
 	private GroundItem lootItem;
 
-	@Override
-	public void onStart() { //0th state
-		super.onStart();
-		s = new State();
-		while (s.getState() < 1) {
+        @Override
+        public void onStart() { //0th state
+                super.onStart();
+                s = new State();
+                while (s.getState() < 1) {
 			sleep(100);
 		}
 		for (String s : s.getLoot()) {
 			log("Looting:" + s);
 		}
-		init();
-	}
+                init();
+        }
+
+        public void onStart(SuperBotConfig.CombatConfig config) {
+                s = new State(config);
+                init();
+        }
 
 	private void init() { //1st state
 		kArea = Area.generateArea(s.getFightRadius(), getLocalPlayer().getTile());
