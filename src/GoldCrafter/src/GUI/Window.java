@@ -1,13 +1,13 @@
 package GUI;
 
 import Handler.State;
+import common.gui.ScriptWindow;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-public class Window extends JFrame {
+public class Window extends ScriptWindow {
 
 	public static final int W = 400, H = 250;
 	public static final String TITLE = "Yet Another RuneScape Crafting bot";
@@ -20,20 +20,20 @@ public class Window extends JFrame {
 	private JComboBox comboBox1;
 	private State s;
 
-	public Window() {
-	}
+        public Window(State s) {
+                super(TITLE, W, H);
+                this.s = s;
+                startButton.addActionListener(actionEvent -> {
+                        s.setSmeltLocation(location.getSelectedIndex());
+                        s.setProduct(product.getSelectedIndex());
+                        s.setState(1);
+                        s.killFrame();
+                });
+                setup(RootPanel);
+        }
 
-	public Window(State s) {
-		this.s = s;
-		startButton.addActionListener(actionEvent -> {
-			s.setSmeltLocation(location.getSelectedIndex());
-			s.setProduct(product.getSelectedIndex());
-			s.killFrame();
-		});
-	}
-
-	public JPanel getRootPanel() {
-		return RootPanel;
-	}
+        public JPanel getRootPanel() {
+                return RootPanel;
+        }
 
 }
